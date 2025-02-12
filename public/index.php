@@ -138,21 +138,21 @@ $balance = $wallet ? $wallet["balance"] : 0.00;
 
             <!-- ======================= Cards ================== -->
             <div class="cardBox">
-                <div class="card">
+                <div class="card" onclick="window.location.href='../scripts/transactions.php';" style="cursor: pointer;">
                     <div>
-                        <div class="numbers">1,504</div>
-                        <div class="cardName">Transaction History</div>
+                        <div class="numbers">ksh</div> 
+                        <div class="cardName"><a href="../scripts/transactions.php"> Transaction History</a></div>
                     </div>
 
                     <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
+                    <ion-icon name="receipt-outline"></ion-icon>
                     </div>
                 </div>
 
                 <div class="card" onclick="window.location.href='deposit.html';" style="cursor: pointer;">
                     <div>
-                        <div class="numbers">80</div>
-                        <div class="cardName"><a href="deposit.html">Deposit Funds</a></div>
+                    <div class="numbers">ksh</div> 
+                        <div class="cardName"><a href="deposit.html"> Deposit Funds</a></div>
                     </div>
 
                     <div class="iconBx">
