@@ -481,3 +481,65 @@ body {
 /* a {
   pointer-events: none; 
 } */
+
+
+/* Deposit Form Styling */
+.deposit-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.deposit-container h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.deposit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.deposit-form label {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+  color: #555;
+}
+
+.deposit-form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: 0.3s ease-in-out;
+}
+
+.deposit-form input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.deposit-form button {
+  background: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.deposit-form button:hover {
+  background: #45a049;
+}
+
