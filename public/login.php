@@ -2,7 +2,8 @@
 session_start();
 require '../config/db_connect.php';
 
-$error = "";
+$error = ""; // Initialize the variable to prevent 'undefined variable' warning
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
@@ -15,10 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user && password_verify($password, $user["password_hash"])) {
             $_SESSION["user_id"] = $user["user_id"];
             $_SESSION["full_name"] = $user["full_name"];
-            header("Location: dashboard.php");
+            header("Location: dashboard.php"); // Redirect to dashboard
             exit();
         } else {
-            $error = "Invalid email or password.";
+            $error = "Invalid email or password."; // Assign error message
         }
     } catch (PDOException $e) {
         $error = "Error: " . $e->getMessage();
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="login-container">
         <h2 class="text-center">Login</h2>
-        <?php if ($error): ?>
+        <?php if (!empty($error)): ?>
             <div class="alert alert-danger"> <?php echo $error; ?> </div>
         <?php endif; ?>
         <form action="login.php" method="POST">
