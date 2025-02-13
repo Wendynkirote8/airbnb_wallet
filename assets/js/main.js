@@ -19,3 +19,15 @@ toggle.onclick = function () {
   navigation.classList.toggle("active");
   main.classList.toggle("active");
 };
+
+
+function validateDeposit() {
+  let amount = document.getElementById('amount').value;
+  if (amount < 10) {
+      alert("Minimum deposit is $10.");
+      return false;
+  }
+  return true;
+}
+
+document.body.style.overflow = "hidden";
