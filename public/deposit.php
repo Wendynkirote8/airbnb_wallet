@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <form action="deposit.php" method="POST" class="deposit-form" onsubmit="return validateDeposit()">
-        <input type="number" id="amount" name="amount" placeholder="Enter amount (Min: $10)" required>
+        <input type="number" id="amount" name="amount" placeholder="Enter amount (Min: ksh 10)" required>
         <button type="submit">Deposit</button>
     </form>
 </div>
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function validateDeposit() {
         let amount = document.getElementById('amount').value;
         if (amount < 10) {
-            alert("Minimum deposit is $10.");
+            alert("Minimum deposit is ksh 10.");
             return false;
         }
         return true;

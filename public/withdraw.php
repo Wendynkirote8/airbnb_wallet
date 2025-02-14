@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         // Apply discount (10 points = $1)
                         $discount = $amount / 10;
                         $amount -= $discount;
-                        $message = "You redeemed $amount points for a $$discount discount!<br>";
+                        $message = "You redeemed $amount points for a ksh $discount discount!<br>";
                         $messageClass = "success-message";
                     } else {
                         $message = "Not enough points to redeem. Proceeding with regular withdrawal.<br>";
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->execute([$wallet["wallet_id"], $amount]);
 
                 $pdo->commit();
-                $message .= "Withdrawal of $$amount successful!";
+                $message .= "Withdrawal of ksh $amount successful!";
                 $messageClass = "success-message";
 
                 // Refresh loyalty points after redemption
