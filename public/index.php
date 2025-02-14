@@ -72,6 +72,18 @@ $balance = $wallet ? $wallet["balance"] : 0.00;
             <ion-icon name="wallet-outline"></ion-icon>
         </div>
     </div>
+
+    <div class="card" onclick="window.location.href='redeem_points.php';" style="cursor: pointer;">
+        <div>
+            <div class="cardName"><a href="redeem_points.php">Redeem Points</a></div>
+        </div>
+        <div class="iconBx">
+            <ion-icon name="card-outline"></ion-icon>
+        </div>
+    </div>
 </div>
+
+
+
 
 <?php include '../includes/navbarroot.php'; ?>

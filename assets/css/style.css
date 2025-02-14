@@ -11,6 +11,7 @@
 
 :root {
   --blue: #2a2185;
+  --blue2: #1c193f;
   --white: #fff;
   --gray: #f5f5f5;
   --black1: #222;
@@ -504,9 +505,9 @@ body {
 }
 
 .deposit-container h2 {
-  font-size: 24px;
+  font-size: 2.1rem;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--blue);
 }
 
 .deposit-form {
@@ -595,6 +596,15 @@ body {
 .loyalty-container {
   text-align: center;
   padding: 20px;
+  
+}
+
+.loyalty-container .name {
+  position: relative;
+  font-weight: 500;
+  font-size: 2.5rem;
+  color: var(--blue);
+
 }
 
 .points-display {
@@ -612,14 +622,14 @@ body {
   display: inline-block;
   margin-top: 10px;
   padding: 10px 20px;
-  background-color: blue;
+  background-color: var(--blue);
   color: white;
   text-decoration: none;
   border-radius: 5px;
 }
 
 .deposit-link:hover {
-  background-color: darkblue;
+  background-color: var(--blue2);
 }
 
 .welcome-section {
@@ -629,6 +639,12 @@ body {
   background: #f8f9fa;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-section .welcome {
+  font-size: 24px;
+  color: var(--blue);
+  margin-bottom: 5px;
 }
 
 .user-profile img {
@@ -641,7 +657,7 @@ body {
 
 .welcome-section h2 {
   font-size: 24px;
-  color: #333;
+  color: var(--blue);
   margin-bottom: 5px;
 }
 
@@ -649,3 +665,29 @@ body {
   font-size: 18px;
   color: #666;
 }
+
+
+.message-container {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+.error-message {
+  background-color: #ffcccc;
+  color: #d8000c;
+  border: 1px solid #d8000c;
+}
+.success-message {
+  background-color: #ccffcc;
+  color: #008000;
+  border: 1px solid #008000;
+}
+.loyalty-points {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+

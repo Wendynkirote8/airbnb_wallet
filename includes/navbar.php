@@ -72,7 +72,7 @@
                 <li>
                     <a href="loyalty_points.php">
                         <span class="icon">
-                            <ion-icon name="cash-outline"></ion-icon>
+                        <ion-icon name="trophy-outline"></ion-icon>
                         </span>
                         <span class="title">Loyalty Points</span>
                     </a>
@@ -81,9 +81,9 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                            <ion-icon name="cash-outline"></ion-icon>
+                        <ion-icon name="gift-outline"></ion-icon>
                         </span>
-                        <span class="title">withdraw</span>
+                        <span class="title">Redeem Points</span>
                     </a>
                 </li>
 
