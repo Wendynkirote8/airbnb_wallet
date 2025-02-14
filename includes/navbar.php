@@ -1,3 +1,29 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require '../config/db_connect.php';
+
+if (!isset($_SESSION["user_id"])) {
+    die("Unauthorized access.");
+}
+
+$user_id = $_SESSION["user_id"];
+
+// Fetch user details
+$stmt = $pdo->prepare("SELECT full_name, email, profile_picture FROM users WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$full_name = $user['full_name'] ?? 'Guest';
+$email = $user['email'] ?? 'guest@example.com';
+$profile_picture = $user['profile_picture'] ? "../uploads/" . $user['profile_picture'] : "../assets/imgs/default-profile.png";
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -149,10 +175,46 @@
                     </label>
                 </div>
 
-                <div class="user">
-                    <img src="../assets/imgs/customer01.jpg" alt="">
+                
+
+                <!-- User Profile Icon -->
+            <div class="user" onclick="toggleProfileDropdown()">
+                <img src="<?php echo $profile_picture; ?>" alt="User Profile">
+            </div>
+
+            <!-- Profile Dropdown -->
+            <div id="profileDropdown" class="dropdown">
+                <div class="dropdown-content">
+                    <img src="<?php echo $profile_picture; ?>" alt="Profile Picture">
+                    <p class="user-name"><strong><?php echo $full_name; ?></strong></p>
+                    <p class="user-email"><?php echo $email; ?></p>
+                    <button onclick="window.location.href='update_profile.php'">Edit Profile</button>
+                    <button onclick="window.location.href='../public/logout.php'">Logout</button>
                 </div>
             </div>
 
-            
-    
+            <!-- JavaScript -->
+            <script>
+                function toggleProfileDropdown() {
+                    let dropdown = document.getElementById("profileDropdown");
+                    dropdown.classList.toggle("show");
+                }
+
+                // Close dropdown when clicking outside
+                window.onclick = function(event) {
+                    if (!event.target.closest(".user")) {
+                        document.getElementById("profileDropdown").classList.remove("show");
+                    }
+                }
+            </script>
+           </div>
+
+  <!-- =========== Scripts =========  -->
+    <script src="../assets/js/main.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>  
+
+    </body>
+</html>

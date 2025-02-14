@@ -31,3 +31,16 @@ function validateDeposit() {
 }
 
 document.body.style.overflow = "hidden";
+
+
+function toggleProfileDropdown() {
+  let dropdown = document.getElementById("profileDropdown");
+  dropdown.classList.toggle("show");
+}
+
+// Close dropdown when clicking outside
+window.onclick = function(event) {
+  if (!event.target.closest(".user")) {
+      document.getElementById("profileDropdown").classList.remove("show");
+  }
+}

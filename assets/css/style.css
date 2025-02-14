@@ -691,3 +691,66 @@ body {
   margin-bottom: 10px;
 }
 
+
+/* Dropdown Styling */
+.dropdown {
+  position: absolute;
+  top: 50px; /* Adjusted to be closer to the profile image */
+  right: 10px; /* Fine-tune alignment */
+  width: 230px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  display: none;
+  z-index: 1000;
+  text-align: center;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.dropdown button {
+  width: 90%;
+  padding: 10px;
+  margin-top: 5px;
+  background: var(--blue);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.dropdown button:hover {
+  background: var(--blue2)
+}
