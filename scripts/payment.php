@@ -57,7 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Payment successful!";
     } catch (PDOException $e) {
         $pdo->rollBack();
-        echo "Error: " . $e->getMessage();
+        echo "Error: " . $e->getMessage(); 
+        // fgbrkd
     }
 }
 ?>
