@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (PDOException $e) {
         $pdo->rollBack();
         echo "Error: " . $e->getMessage(); 
-        // fgbrkd
+        // fgbrkd......,lo
     }
 }
 ?>
