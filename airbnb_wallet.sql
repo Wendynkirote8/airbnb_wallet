@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 14, 2025 at 06:09 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- Host: localhost
+-- Generation Time: Feb 16, 2025 at 05:12 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -55,7 +55,7 @@ CREATE TABLE `loyalty_points` (
 --
 
 INSERT INTO `loyalty_points` (`id`, `user_id`, `points`, `last_updated`) VALUES
-(1, 1, 85, '2025-02-13 13:37:50'),
+(1, 1, 100, '2025-02-15 14:14:04'),
 (2, 3, 88, '2025-02-14 14:06:40'),
 (3, 7, 366, '2025-02-14 12:45:04');
 
@@ -143,7 +143,12 @@ INSERT INTO `transactions` (`transaction_id`, `wallet_id`, `amount`, `transactio
 (46, 2, 2.70, 'withdrawal', 'completed', '2025-02-14 14:00:38'),
 (47, 2, 2.70, 'withdrawal', 'completed', '2025-02-14 14:01:29'),
 (48, 2, 2.70, 'withdrawal', 'completed', '2025-02-14 14:06:37'),
-(49, 2, 2.70, 'withdrawal', 'completed', '2025-02-14 14:06:40');
+(49, 2, 2.70, 'withdrawal', 'completed', '2025-02-14 14:06:40'),
+(50, 1, 300.00, 'deposit', 'completed', '2025-02-15 14:11:48'),
+(51, 1, 200.00, 'deposit', 'completed', '2025-02-15 14:12:54'),
+(52, 1, 200.00, 'withdrawal', 'completed', '2025-02-15 14:13:10'),
+(53, 1, 600.00, 'withdrawal', 'completed', '2025-02-15 14:13:29'),
+(54, 1, 9.00, 'withdrawal', 'completed', '2025-02-15 14:14:04');
 
 -- --------------------------------------------------------
 
@@ -167,7 +172,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `full_name`, `profile_picture`, `email`, `phone`, `password_hash`, `role`, `created_at`) VALUES
-(1, 'Vivian Makena Gituma', '../uploads/1739542029_WhatsApp Image 2025-02-07 at 16.34.39_4c7c1df9 (1).JPG', 'viviankenya254@gmail.com', '0741559992', '$2y$10$stBeLbFFJfSzQlHgsCJb1egQJS6ehGbKTpNzRe/hGW0fpKsXKLcTe', 'guest', '2025-02-10 14:45:26'),
+(1, 'Nkirote gituma', '../uploads/1739629487_code-8779047_1280.jpg', 'nkirote@gmail.com', '0741559992', '$2y$10$stBeLbFFJfSzQlHgsCJb1egQJS6ehGbKTpNzRe/hGW0fpKsXKLcTe', 'guest', '2025-02-10 14:45:26'),
 (3, 'Muchiri Paul', '../uploads/1739541322_dog-287420_1280.jpg', 'pmc.ac.ke@gmail.com', '0710664060', '$2y$10$gktgDmSYiavWNumPAcpbEeT2WM92mUeDT4lLQmpXjCT3jeqsgwlp6', 'guest', '2025-02-11 12:07:03'),
 (4, 'Nkirote', '../assets/imgs/default-user.png', 'pmc.pmc@gmail.com', '071234567', '$2y$10$xjWEa4wHxUOFiqccxcPgGu6rj5b5x/YRh9CS7cHt4Qm17mp8mrAUu', 'guest', '2025-02-13 13:58:02'),
 (6, 'Makau', '../assets/imgs/default-user.png', 'makau@gmail.com', '0710345657', '$2y$10$pXSGgzUwKr1q8fbWRk55tuHXLGDIKdi3Icfvripk158DvvtBUd9Y.', 'guest', '2025-02-14 08:43:54'),
@@ -192,7 +197,7 @@ CREATE TABLE `wallets` (
 --
 
 INSERT INTO `wallets` (`wallet_id`, `user_id`, `balance`, `currency`) VALUES
-(1, 1, 6562.00, 'USD'),
+(1, 1, 6253.00, 'USD'),
 (2, 3, 4071.20, 'USD'),
 (3, 7, 24464.40, 'USD');
 
@@ -272,7 +277,7 @@ ALTER TABLE `payment_logs`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `users`
