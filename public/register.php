@@ -10,11 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = trim($_POST["phone"]);
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
 
-    // Handle profile picture upload
+    // profile picture upload
     $profile_picture = "../assets/imgs/default-user.png"; // Default profile image
 
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0) {
-        $target_dir = "../uploads/"; // Ensure this directory exists
+        $target_dir = "../uploads/profiles/"; // 
         $file_name = time() . "_" . basename($_FILES["profile_picture"]["name"]); // Unique file name
         $target_file = $target_dir . $file_name;
 

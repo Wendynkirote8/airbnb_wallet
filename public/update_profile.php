@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Handle profile picture upload
     if (!empty($_FILES["profile_picture"]["name"])) {
-        $target_dir = "../uploads/";
+        $target_dir = "../uploads/profiles/";
         $file_name = basename($_FILES["profile_picture"]["name"]);
         $target_file = $target_dir . time() . "_" . $file_name;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
