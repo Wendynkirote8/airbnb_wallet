@@ -19,7 +19,7 @@ $points = $loyalty ? $loyalty["points"] : 0;
 
 <?php include '../includes/navbar.php'; ?>
 
-<div class="loyalty-container">
+<div class="deposit-container">
     <div class="name">Your Loyalty Points</div>
 
     <?php if ($points > 0): ?>

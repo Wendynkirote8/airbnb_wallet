@@ -502,6 +502,12 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  
+}
+.deposit-container label {
+  display: block;
+  margin-top: 15px;
+  font-size: 16px;
 }
 
 .deposit-container h2 {
@@ -551,15 +557,6 @@ body {
 
 .deposit-form button:hover {
   background: #45a049;
-}
-
-.deposit-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  background: #f4f4f4;
-  border-radius: 8px;
-  text-align: center;
 }
 
 .deposit-form input {
@@ -814,3 +811,63 @@ body {
     .update-profile-container button:hover {
         background: var(--blue2);
     }
+
+
+
+    /* redeem points */
+
+  
+.container_redeem {
+    width: 50%;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+}
+
+.points_redeem {
+    font-size: 22px;
+    font-weight: bold;
+    color: green;
+}
+
+.money_redeem {
+    font-size: 20px;
+    color: blue;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+input {
+    padding: 8px;
+    width: 80%;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
