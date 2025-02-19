@@ -105,7 +105,7 @@ $profile_picture = $user['profile_picture'] ? "../uploads/" . $user['profile_pic
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="redeem_points.php">
                         <span class="icon">
                         <ion-icon name="gift-outline"></ion-icon>
                         </span>

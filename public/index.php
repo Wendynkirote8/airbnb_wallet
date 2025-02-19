@@ -21,6 +21,12 @@ $stmt = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
 $balance = $wallet ? $wallet["balance"] : 0.00;
+
+// Get user's loyalty points
+$stmt = $pdo->prepare("SELECT points FROM loyalty_points WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$points = $stmt->fetch(PDO::FETCH_ASSOC)["points"] ?? 0;
+$equivalent_money = $points / 10; // 10 points = 1 Ksh
 ?>
 
 <?php include '../includes/navbar.php'; ?>
@@ -73,6 +79,26 @@ $balance = $wallet ? $wallet["balance"] : 0.00;
         </div>
     </div>
 
+    <div class="card">
+        <div>
+            <div class="numbers"><span class="points"><?php echo number_format($points); ?> pts</span></div>
+            <div class="cardName">Loyalty Points</div>
+        </div>
+        <div class="iconBx">
+            <ion-icon name="gift-outline"></ion-icon>
+        </div>
+    </div>
+
+    <div class="card">
+        <div>
+            <div class="numbers"><span class="money">Ksh<?php echo number_format($equivalent_money, 2); ?></span></div>
+            <div class="cardName">Redeemable Amount</div>
+        </div>
+        <div class="iconBx">
+            <ion-icon name="cash-outline"></ion-icon>
+        </div>
+    </div>
+
     <div class="card" onclick="window.location.href='redeem_points.php';" style="cursor: pointer;">
         <div>
             <div class="cardName"><a href="redeem_points.php">Redeem Points</a></div>
@@ -82,8 +108,5 @@ $balance = $wallet ? $wallet["balance"] : 0.00;
         </div>
     </div>
 </div>
-
-
-
 
 <?php include '../includes/navbarroot.php'; ?>

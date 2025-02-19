@@ -19,6 +19,7 @@ $equivalent_money = $userPoints / 10;
 ?>
 
 
+
 <?php include '../includes/navbar.php'; ?>
 
     <div class="deposit-container">
@@ -26,7 +27,7 @@ $equivalent_money = $userPoints / 10;
         <p>You have <span class="points_redeem"><?php echo number_format($userPoints); ?></span> points.</p>
         <p>Equivalent Value: <span class="money_redeem">Ksh <?php echo number_format($equivalent_money, 2); ?></span></p>
 
-        <form action="../scripts/redeem_points_action.php" class="deposit-form" method="POST">
+        <form action="../scripts/redeem_points_action.php" method="POST">
             <input type="number" name="redeem_points" id="redeem_points" placeholder="Enter Points to Redeem" min="10" max="<?php echo $userPoints; ?>" required>
             <button type="submit">Redeem Points</button>
         </form>
