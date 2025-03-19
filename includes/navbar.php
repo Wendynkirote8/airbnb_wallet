@@ -60,7 +60,7 @@ $profile_picture = $user['profile_picture'] ? "../uploads/" . $user['profile_pic
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="listings.php">
                         <span class="icon">
                             <ion-icon name="bed-outline"></ion-icon>
                         </span>
