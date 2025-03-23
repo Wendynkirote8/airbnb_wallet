@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../admin/config/db_connect.php'; // This file should create a PDO instance named $pdo
+require_once '../config/db_connect.php'; // This file should create a PDO instance named $pdo
 
 // Ensure only admins can access this page.
 if (!isset($_SESSION["admin_id"])) {

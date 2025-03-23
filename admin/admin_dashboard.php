@@ -210,14 +210,14 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
             <span class="title">Change Password</span>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a href="admin_transactions.php">
             <span class="icon">
               <ion-icon name="receipt-outline"></ion-icon>
             </span>
             <span class="title">Transactions</span>
           </a>
-        </li>
+        </li> -->
         <li>
           <a onclick="window.location.href='../admin/logout_admin.php';" style="cursor: pointer;">
             <span class="icon">
