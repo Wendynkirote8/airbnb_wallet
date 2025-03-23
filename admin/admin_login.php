@@ -62,22 +62,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
+
         <!-- Disable autocomplete for the form -->
         <form action="admin_login.php" method="POST" autocomplete="off">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <!-- Disable autocomplete for the username input -->
-                <input type="text" name="username" class="form-control" id="username" placeholder="Enter your username" autocomplete="off" required>
+                <input 
+                  type="text" 
+                  name="username" 
+                  class="form-control" 
+                  id="username" 
+                  placeholder="Enter your username" 
+                  autocomplete="off" 
+                  required
+                >
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <!-- Use autocomplete="new-password" on the password input -->
-                <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" autocomplete="new-password" required>
+                <input 
+                  type="password" 
+                  name="password" 
+                  class="form-control" 
+                  id="password" 
+                  placeholder="Enter your password" 
+                  autocomplete="new-password" 
+                  required
+                >
             </div>
+
+            <!-- Forgot Password Link -->
+            <div class="d-flex justify-content-between mb-3">
+                <a href="admin_forgot_password.php">Forgot Password?</a>
+            </div>
+
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
+
         <div class="mt-3 text-center">
-            <a href="admin_register.php" class="btn btn-secondary">Register New Admin</a>
+            <a href="../public/login.php" class="btn btn-secondary">Login as normal user</a>
         </div>
     </div>
 </body>

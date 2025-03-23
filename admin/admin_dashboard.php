@@ -252,7 +252,7 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
             <p class="user-name"><strong><?php echo htmlspecialchars($username); ?></strong></p>
             <p class="user-email"><?php echo htmlspecialchars($email); ?></p>
             <button onclick="window.location.href='admin_edit_profile.php'">Edit Profile</button>
-            <button onclick="window.location.href='../public/logout_admin.php'">Logout</button>
+            <button onclick="window.location.href='../admin/logout_admin.php'">Logout</button>
           </div>
         </div>
       </div>
