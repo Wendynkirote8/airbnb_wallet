@@ -1,0 +1,460 @@
+/* General Resets */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Body and Layout */
+  body {
+    background: #f4f6f8;
+    color: #333;
+    display: flex;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sidebar-brand {
+    text-align: center;
+    padding: 20px 0;
+    width: 100%;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .sidebar-brand h2 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+  }
+  
+  .sidebar-nav {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .sidebar-nav ul {
+    list-style: none;
+  }
+  
+  .sidebar-nav li {
+    width: 100%;
+  }
+  
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  
+  .sidebar-nav a:hover {
+    background: #f0f0f0;
+  }
+  
+  .sidebar-nav ion-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .header-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .header-search input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .header-user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Overview Section */
+  .overview {
+    padding: 20px;
+    background: #f4f6f8;
+  }
+  
+  .welcome-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .welcome-card h1 {
+    margin-bottom: 10px;
+  }
+  
+  /* Info Cards */
+  .info-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .info-card {
+    flex: 1 1 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .info-card ion-icon {
+    font-size: 2rem;
+    color: #57606f;
+  }
+  
+  .info-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #2c3e50;
+  }
+  
+  /* Quick Actions Section */
+  .actions {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+  
+  .action-card {
+    flex: 1 1 200px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .action-card a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .action-card ion-icon {
+    font-size: 2rem;
+    color: #57606f;
+  }
+  
+  /* Chart Section */
+  .chart-section {
+    background: #fff;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .chart-section h3 {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none; /* or transform to a collapsible menu if you prefer */
+    }
+    .info-cards,
+    .actions {
+      flex-direction: column;
+    }
+  }
+  
+
+/* For success/error messages */
+.message-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  /* For forms */
+  .form-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  .deposit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .deposit-form label {
+    font-weight: 500;
+    color: #444;
+  }
+  .deposit-form input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .button-row {
+    display: flex;
+    gap: 10px;
+  }
+  .button-row button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #2c3e50;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .button-row button:hover {
+    background: #3e4f61;
+  }
+  
+  /* Table Card */
+.table-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .table-header {
+    margin-bottom: 15px;
+  }
+  
+  .table-header h2 {
+    margin: 0;
+  }
+  
+  /* Responsive table wrapper */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Basic table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Force table to scroll horizontally on smaller screens */
+  }
+  
+  table th,
+  table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  table thead {
+    background: #f2f2f2;
+  }
+  
+  table tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  /* Status labels */
+  .status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  
+  /* Example status color mapping */
+  .status.completed {
+    background: #28a745; /* green */
+  }
+  .status.pending {
+    background: #ffc107; /* yellow */
+  }
+  .status.failed {
+    background: #dc3545; /* red */
+  }
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-brand {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  .sidebar-brand h2 {
+    margin: 0;
+  }
+  .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.3s;
+  }
+  .sidebar-nav li a:hover {
+    background: #f0f0f0;
+  }
+  .sidebar-nav ion-icon {
+    margin-right: 8px;
+    font-size: 1.2rem;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  .header-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-search input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Overview Section */
+  .overview {
+    padding: 20px;
+    background: #f4f6f8;
+    flex: 1;
+  }
+  
+  /* Welcome Card */
+  .welcome-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  /* Form Card */
+  .form-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .deposit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .deposit-form label {
+    font-weight: 500;
+  }
+  .deposit-form input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .deposit-form button {
+    padding: 10px 16px;
+    background: #2c3e50;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .deposit-form button:hover {
+    background: #3e4f61;
+  }
+  
+  

@@ -1,8 +1,10 @@
 <?php
 session_start();
-require '../config/db_connect.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+require '../admin/config/db_connect.php'; // This file should create a PDO instance named $pdo
 
-// Ensure only admins can access this page
+// Ensure only admins can access this page.
 if (!isset($_SESSION["admin_id"])) {
     header("Location: admin_login.php");
     exit();
@@ -30,11 +32,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Fetch list of users for selection
-$stmt = $pdo->query("SELECT user_id, full_name, email FROM users");
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Fetch list of users for selection.
+try {
+    $stmt = $pdo->query("SELECT user_id, full_name, email FROM users");
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching users: " . $e->getMessage());
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,10 +52,10 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="container mt-4">
     <h2>Change User Password</h2>
     <?php if (!empty($error)): ?>
-      <div class="alert alert-danger"><?php echo $error; ?></div>
+      <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
     <?php if (!empty($success)): ?>
-      <div class="alert alert-success"><?php echo $success; ?></div>
+      <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
     <?php endif; ?>
     <div class="mb-3">
       <label for="userSelect" class="form-label">Select User</label>

@@ -904,4 +904,82 @@ body {
     border-radius: 5px;
 }
 
-  
+/* ====== Centered Form Container for Add Room Page ====== */
+.content .form-container {
+  max-width: 600px;               /* Adjust width as needed */
+  margin: 2rem auto;              /* Centers the container horizontally */
+  background: #fff;               /* White background */
+  border-radius: 8px;             /* Slightly rounded corners */
+  padding: 1.5rem;                /* Spacing inside the container */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+}
+
+/* Optional: Style the heading inside the form container */
+.content .form-container h2 {
+  margin-bottom: 1rem;
+  color: var(--blue);
+}
+
+/* Reuse your existing form styles inside the container */
+.content .form-container .form-group {
+  margin-bottom: 1rem;
+}
+
+.content .form-container .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.content .form-container .form-group input,
+.content .form-container .form-group textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.content .form-container .form-group input:focus,
+.content .form-container .form-group textarea:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+
+/* Buttons & Alerts can also be scoped to .form-container if desired */
+.content .form-container .custom-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--blue);
+  color: var(--white);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.content .form-container .custom-btn:hover {
+  background-color: var(--blue2);
+}
+
+.content .form-container .custom-alert {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.content .form-container .custom-alert.alert-error {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.content .form-container .custom-alert.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
