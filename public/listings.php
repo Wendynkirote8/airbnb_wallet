@@ -2,7 +2,7 @@
 session_start();
 require_once '../config/db_connect.php'; // Ensure $pdo is set up
 
-// Fetch all available rooms (adjust query as needed)
+// Fetch all available rooms
 $stmt = $pdo->query("SELECT id, name, description, price, capacity, image FROM rooms ORDER BY created_at DESC");
 $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -151,6 +151,7 @@ $profile_picture = $user && !empty($user["profile_picture"])
                   <p class="price">ksh. <?php echo number_format($room['price'], 2); ?></p>
                   <p class="capacity">Capacity: <?php echo htmlspecialchars($room['capacity']); ?></p>
                 </div>
+                <!-- Link to the booking page -->
                 <a href="room_details.php?id=<?php echo $room['id']; ?>" class="select-btn">Select Room</a>
               </div>
             <?php endforeach; ?>
