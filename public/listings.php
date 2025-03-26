@@ -104,6 +104,7 @@ $profile_picture = $user && !empty($user["profile_picture"])
     <nav class="sidebar-nav">
       <ul>
         <li><a href="dashboard.php"><ion-icon name="grid-outline"></ion-icon> Dashboard</a></li>
+        <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
         <li><a href="listings.php" class="active"><ion-icon name="bed-outline"></ion-icon> Available Rooms</a></li>
         <li><a href="#"><ion-icon name="chatbubble-outline"></ion-icon> Messages</a></li>
         <li><a href="#"><ion-icon name="help-outline"></ion-icon> Help</a></li>

@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require '../config/db_connect.php';
 
@@ -18,17 +23,17 @@ $profile_picture = $user && !empty($user["profile_picture"])
     ? "../uploads/" . $user["profile_picture"] 
     : "../assets/imgs/default-user.png";
 
-// Fetch transactions
+// Fetch booking history
 try {
     $stmt = $pdo->prepare("
-        SELECT t.transaction_id, t.amount, t.transaction_type, t.status, t.created_at 
-        FROM transactions t 
-        JOIN wallets w ON t.wallet_id = w.wallet_id 
-        WHERE w.user_id = ? 
-        ORDER BY t.created_at DESC
+        SELECT b.id, r.name AS room_name, b.days, b.total_cost, b.booking_date 
+        FROM bookings b 
+        JOIN rooms r ON b.room_id = r.id 
+        WHERE b.user_id = ? 
+        ORDER BY b.booking_date DESC
     ");
     $stmt->execute([$user_id]);
-    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
 }
@@ -38,7 +43,7 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Transaction History - Modern UI</title>
+  <title>Booking History - Modern UI</title>
 
   <!-- Use the same CSS as your redesigned dashboard -->
   <link rel="stylesheet" href="../assets/css/dashboard_new.css">
@@ -57,10 +62,10 @@ try {
     <nav class="sidebar-nav">
       <ul>
         <li><a href="dashboard.php"><ion-icon name="home-outline"></ion-icon> Dashboard</a></li>
-        <!-- Highlight the Transaction History link as active -->
-        <li><a href="transactions.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Transaction History</a></li>
+        <!-- Highlight the Booking History link as active -->
+        <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
         <li><a href="deposit.php"><ion-icon name="card-outline"></ion-icon> Deposit Funds</a></li>
-        <li><a href="withdraw_new.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>
+        <!-- <li><a href="withdraw_new.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>-->
         <li><a href="redeem_points.php"><ion-icon name="gift-outline"></ion-icon> Redeem Points</a></li>
         <li><a href="messages.php"><ion-icon name="chatbubble-ellipses-outline"></ion-icon> Messages</a></li>
         <li><a href="settings.php"><ion-icon name="settings-outline"></ion-icon> Settings</a></li>
@@ -88,44 +93,40 @@ try {
     <section class="overview">
       <!-- Title Card -->
       <div class="welcome-card">
-        <h1>Transaction History</h1>
-        <p>Review all your recent transactions below.</p>
+        <h1>Booking History</h1>
+        <p>Review all your room bookings below.</p>
       </div>
 
-      <!-- Transactions Table Card -->
+      <!-- Booking History Table Card -->
       <div class="table-card">
         <div class="table-header">
-          <h2>Recent Transactions</h2>
+          <h2>Recent Bookings</h2>
         </div>
         <div class="table-responsive">
           <table>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Amount (Ksh)</th>
-                <th>Type</th>
-                <th>Status</th>
+                <th>Booking ID</th>
+                <th>Room</th>
+                <th>Days</th>
+                <th>Total Cost (Ksh)</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody>
-              <?php if (!empty($transactions)): ?>
-                <?php foreach ($transactions as $transaction): ?>
+              <?php if (!empty($bookings)): ?>
+                <?php foreach ($bookings as $booking): ?>
                   <tr>
-                    <td><?php echo htmlspecialchars($transaction['transaction_id']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['amount']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['transaction_type']); ?></td>
-                    <td>
-                      <span class="status <?php echo strtolower(htmlspecialchars($transaction['status'])); ?>">
-                        <?php echo htmlspecialchars($transaction['status']); ?>
-                      </span>
-                    </td>
-                    <td><?php echo htmlspecialchars($transaction['created_at']); ?></td>
+                    <td><?php echo htmlspecialchars($booking['id']); ?></td>
+                    <td><?php echo htmlspecialchars($booking['room_name']); ?></td>
+                    <td><?php echo htmlspecialchars($booking['days']); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($booking['total_cost'], 2)); ?></td>
+                    <td><?php echo htmlspecialchars($booking['booking_date']); ?></td>
                   </tr>
                 <?php endforeach; ?>
               <?php else: ?>
                 <tr>
-                  <td colspan="5" style="text-align: center;">No transactions found.</td>
+                  <td colspan="5" style="text-align: center;">No bookings found.</td>
                 </tr>
               <?php endif; ?>
             </tbody>

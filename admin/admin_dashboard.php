@@ -19,34 +19,114 @@ $email = $admin['email'] ?? 'admin@example.com';
 // Use a default profile picture since none exists in your schema.
 $profile_picture = "../assets/imgs/default-profile.png";
 
-// Sample data for summary cards (in a real app, fetch from your database)
-
-// Query total rooms
+// Query summary cards data
+// Total Rooms
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM rooms");
 $totalRooms = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Query total users
+// Total Users
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
 $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Query total transactions (sum of amounts)
+// Total Transactions (sum of amounts)
 $stmt = $pdo->query("SELECT SUM(amount) as total FROM transactions");
 $totalTransactionsData = $stmt->fetch(PDO::FETCH_ASSOC);
 $totalTransactions = $totalTransactionsData['total'] ?? 0;
 
-// // Query pending requests
-// $stmt = $pdo->query("SELECT COUNT(*) as total FROM requests WHERE status = 'pending'");
-// $pendingRequests = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-
-
-// $totalRooms = 12;
-// $totalUsers = 45;
-// $totalTransactions = 2345;
+// Pending Requests (sample)
 $pendingRequests = 3;
 
-// Sample data for Chart.js (e.g., Rooms Added Over the Last 6 Months)
-$months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-$roomsAdded = [2, 3, 1, 4, 2, 0];
+// === Improved Graph Data ===
+// We'll fetch monthly data for new rooms, new users, and total transactions.
+// For demonstration purposes, we assume that each table has a created_at date field.
+
+// Rooms Added per Month
+$stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS rooms_count
+    FROM rooms
+    GROUP BY month
+    ORDER BY month ASC
+");
+$stmt->execute();
+$roomsDataRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// New Users Registered per Month
+$stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS users_count
+    FROM users
+    GROUP BY month
+    ORDER BY month ASC
+");
+$stmt->execute();
+$usersDataRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Total Transactions per Month
+$stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(amount) AS total_transactions
+    FROM transactions
+    GROUP BY month
+    ORDER BY month ASC
+");
+$stmt->execute();
+$transactionsDataRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Merge months from all datasets
+$allMonths = [];
+foreach ($roomsDataRaw as $row) {
+    $allMonths[$row['month']] = true;
+}
+foreach ($usersDataRaw as $row) {
+    $allMonths[$row['month']] = true;
+}
+foreach ($transactionsDataRaw as $row) {
+    $allMonths[$row['month']] = true;
+}
+ksort($allMonths);
+$labels = array_keys($allMonths);
+
+// Prepare data arrays with default value 0 for missing months
+$roomsData = [];
+$usersData = [];
+$transactionsData = [];
+
+foreach ($labels as $month) {
+    // Rooms
+    $found = false;
+    foreach ($roomsDataRaw as $row) {
+        if ($row['month'] == $month) {
+            $roomsData[] = intval($row['rooms_count']);
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $roomsData[] = 0;
+    }
+    // Users
+    $found = false;
+    foreach ($usersDataRaw as $row) {
+        if ($row['month'] == $month) {
+            $usersData[] = intval($row['users_count']);
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $usersData[] = 0;
+    }
+    // Transactions (in Ksh)
+    $found = false;
+    foreach ($transactionsDataRaw as $row) {
+        if ($row['month'] == $month) {
+            $transactionsData[] = floatval($row['total_transactions']);
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $transactionsData[] = 0;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +142,7 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Internal CSS for Dashboard Enhancements -->
   <style>
-    /* Center welcome and content */
+    /* Container styling */
     .content {
       text-align: center;
       padding: 20px;
@@ -123,7 +203,7 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
     }
     /* Graph Container */
     .graph-container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 2rem auto;
       background: var(--white);
       padding: 1rem;
@@ -132,7 +212,7 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
     }
     /* Latest Transactions Section */
     .transactions-container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 2rem auto;
       text-align: left;
     }
@@ -171,13 +251,13 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
           </a>
         </li>
         <li>
-        <a href="create_admin.php">
-          <span class="icon">
-            <ion-icon name="person-add-outline"></ion-icon>
-          </span>
-          <span class="title">Create Admin</span>
-        </a>
-      </li>
+          <a href="create_admin.php">
+            <span class="icon">
+              <ion-icon name="person-add-outline"></ion-icon>
+            </span>
+            <span class="title">Create Admin</span>
+          </a>
+        </li>
         <li>
           <a href="admin_add_room.php">
             <span class="icon">
@@ -210,14 +290,6 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
             <span class="title">Change Password</span>
           </a>
         </li>
-        <!-- <li>
-          <a href="admin_transactions.php">
-            <span class="icon">
-              <ion-icon name="receipt-outline"></ion-icon>
-            </span>
-            <span class="title">Transactions</span>
-          </a>
-        </li> -->
         <li>
           <a onclick="window.location.href='../admin/logout_admin.php';" style="cursor: pointer;">
             <span class="icon">
@@ -274,7 +346,7 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
           </div>
           <div class="card">
             <h3>Transactions</h3>
-            <p>ksh<?php echo number_format($totalTransactions); ?></p>
+            <p>Ksh <?php echo number_format($totalTransactions); ?></p>
           </div>
           <div class="card">
             <h3>Pending Requests</h3>
@@ -282,18 +354,18 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
           </div>
         </div>
         
-        <!-- Graph Section -->
+        <!-- Improved Graph Section -->
         <div class="graph-container">
-          <h3>Rooms Added Over Last 6 Months</h3>
-          <canvas id="roomsChart"></canvas>
+          <h3>Platform Trends (Monthly)</h3>
+          <canvas id="trendsChart"></canvas>
         </div>
         
         <!-- Latest Transactions (Placeholder) -->
         <div class="transactions-container">
           <h3>Latest Transactions</h3>
-          <div class="transaction-item">Transaction #101 - $250</div>
-          <div class="transaction-item">Transaction #102 - $180</div>
-          <div class="transaction-item">Transaction #103 - $320</div>
+          <div class="transaction-item">Transaction #101 - Ksh 250</div>
+          <div class="transaction-item">Transaction #102 - Ksh 180</div>
+          <div class="transaction-item">Transaction #103 - Ksh 320</div>
           <!-- Add more items as needed -->
         </div>
         
@@ -308,32 +380,83 @@ $roomsAdded = [2, 3, 1, 4, 2, 0];
     </div>
   </div>
   
-  <!-- Chart.js Script -->
+  <!-- Chart.js Script for Improved Trends Chart -->
   <script>
-    // Get the context of the canvas element we want to select
-    const ctx = document.getElementById('roomsChart').getContext('2d');
-    const roomsChart = new Chart(ctx, {
-      type: 'line', // You can choose 'bar', 'line', etc.
+    // Prepare PHP arrays for Chart.js
+    var labels = <?php echo json_encode($labels); ?>;
+    var roomsData = <?php echo json_encode($roomsData); ?>;
+    var usersData = <?php echo json_encode($usersData); ?>;
+    var transactionsData = <?php echo json_encode($transactionsData); ?>;
+    
+    var ctx = document.getElementById('trendsChart').getContext('2d');
+    var trendsChart = new Chart(ctx, {
+      type: 'line',
       data: {
-        labels: <?php echo json_encode($months); ?>,
-        datasets: [{
-          label: 'Rooms Added',
-          data: <?php echo json_encode($roomsAdded); ?>,
-          backgroundColor: 'rgba(42, 33, 133, 0.2)', // var(--blue) with transparency
-          borderColor: 'rgba(42, 33, 133, 1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
-        }]
+        labels: labels,
+        datasets: [
+          {
+            label: 'Rooms Added',
+            data: roomsData,
+            borderColor: 'rgba(42, 33, 133, 1)', // a blue tone
+            backgroundColor: 'rgba(42, 33, 133, 0.2)',
+            fill: true,
+            tension: 0.4,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'New Users',
+            data: usersData,
+            borderColor: 'rgba(255, 159, 64, 1)', // orange tone
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            fill: true,
+            tension: 0.4,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'Transaction Amount (Ksh)',
+            data: transactionsData,
+            borderColor: 'rgba(75, 192, 192, 1)', // greenish tone
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: true,
+            tension: 0.4,
+            yAxisID: 'y'
+          }
+        ]
       },
       options: {
         responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
         scales: {
           y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            }
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Transaction Amount (Ksh)'
+            },
+            beginAtZero: true
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: {
+              display: true,
+              text: 'Count'
+            },
+            grid: {
+              drawOnChartArea: false
+            },
+            beginAtZero: true
           }
         }
       }

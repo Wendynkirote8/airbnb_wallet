@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require '../config/db_connect.php';
 
@@ -6,6 +11,8 @@ require '../config/db_connect.php';
 if (!isset($_SESSION["user_id"])) {
     die("Unauthorized access.");
 }
+
+$user_id = $_SESSION["user_id"];
 
 // Variables to hold messages
 $successMessage = $errorMessage = "";
@@ -69,8 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// (Optional) Fetch user details for header display
-$user_id = $_SESSION["user_id"];
+// Fetch user details for header display
 $stmt = $pdo->prepare("SELECT full_name, profile_picture FROM users WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -78,6 +84,21 @@ $full_name = $user ? $user["full_name"] : "User";
 $profile_picture = $user && !empty($user["profile_picture"]) 
     ? "../uploads/" . $user["profile_picture"] 
     : "../assets/imgs/default-user.png";
+
+// Fetch deposit history (only deposit transactions)
+try {
+    $stmt = $pdo->prepare("
+        SELECT t.transaction_id, t.amount, t.status, t.created_at 
+        FROM transactions t 
+        JOIN wallets w ON t.wallet_id = w.wallet_id 
+        WHERE w.user_id = ? AND t.transaction_type = 'deposit'
+        ORDER BY t.created_at DESC
+    ");
+    $stmt->execute([$user_id]);
+    $deposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,6 +126,31 @@ $profile_picture = $user && !empty($user["profile_picture"])
       background-color: #f8d7da;
       color: #721c24;
     }
+    /* Styles for deposit history table */
+    .table-card {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .table-card h2 {
+      margin-bottom: 15px;
+      color: #2a2185;
+    }
+    .table-responsive table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-responsive th, .table-responsive td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    .table-responsive th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
   </style>
 
   <!-- Ionicons for icons -->
@@ -120,10 +166,10 @@ $profile_picture = $user && !empty($user["profile_picture"])
     <nav class="sidebar-nav">
       <ul>
         <li><a href="dashboard.php"><ion-icon name="grid-outline"></ion-icon> Dashboard</a></li>
-        <li><a href="transactions.php"><ion-icon name="receipt-outline"></ion-icon> Transaction History</a></li>
+        <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
         <!-- Highlight deposit as active -->
         <li><a href="deposit.php" class="active"><ion-icon name="card-outline"></ion-icon> Deposit Funds</a></li>
-        <li><a href="withdraw.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>
+        <!-- <li><a href="withdraw.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>-->
         <li><a href="redeem_points.php"><ion-icon name="gift-outline"></ion-icon> Redeem Points</a></li>
         <li><a href="messages.php"><ion-icon name="chatbubble-ellipses-outline"></ion-icon> Messages</a></li>
         <li><a href="settings.php"><ion-icon name="settings-outline"></ion-icon> Settings</a></li>
@@ -179,6 +225,40 @@ $profile_picture = $user && !empty($user["profile_picture"])
           <button type="submit">Deposit</button>
         </form>
       </div>
+
+      <!-- Deposit History Section -->
+      <div class="table-card">
+        <h2>Deposit History</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Amount (Ksh)</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php if (!empty($deposits)): ?>
+                <?php foreach ($deposits as $deposit): ?>
+                  <tr>
+                    <td><?php echo htmlspecialchars($deposit['transaction_id']); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($deposit['amount'], 2)); ?></td>
+                    <td><?php echo htmlspecialchars($deposit['status']); ?></td>
+                    <td><?php echo htmlspecialchars($deposit['created_at']); ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="4" style="text-align: center;">No deposit transactions found.</td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </section>
   </div>
 

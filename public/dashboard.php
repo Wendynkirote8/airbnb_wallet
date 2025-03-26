@@ -1,8 +1,12 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require '../config/db_connect.php';
 
-// Redirect to login if not authenticated
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     exit();
@@ -29,6 +33,73 @@ $stmt->execute([$user_id]);
 $points_data = $stmt->fetch(PDO::FETCH_ASSOC);
 $points = $points_data ? $points_data["points"] : 0;
 $equivalent_money = $points / 10; // 10 points = 1 Ksh
+
+// === Chart Data: Deposits and Bookings ===
+
+// Query deposits: Sum of deposit amounts grouped by month (format YYYY-MM)
+$stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(amount) AS total_deposit 
+    FROM transactions 
+    WHERE transaction_type = 'deposit' 
+      AND wallet_id IN (SELECT wallet_id FROM wallets WHERE user_id = ?)
+    GROUP BY month 
+    ORDER BY month ASC
+");
+$stmt->execute([$user_id]);
+$depositData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Query bookings: Count bookings grouped by month (format YYYY-MM)
+$stmt = $pdo->prepare("
+    SELECT DATE_FORMAT(booking_date, '%Y-%m') AS month, COUNT(*) AS total_bookings 
+    FROM bookings 
+    WHERE user_id = ? 
+    GROUP BY month 
+    ORDER BY month ASC
+");
+$stmt->execute([$user_id]);
+$bookingData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Merge months from both datasets
+$allMonths = [];
+foreach ($depositData as $row) {
+    $allMonths[$row['month']] = true;
+}
+foreach ($bookingData as $row) {
+    $allMonths[$row['month']] = true;
+}
+ksort($allMonths);
+$labels = array_keys($allMonths);
+
+// Prepare data arrays for deposits and bookings
+$depositValues = [];
+$bookingValues = [];
+foreach ($labels as $month) {
+    // Find deposit value for this month
+    $found = false;
+    foreach ($depositData as $row) {
+        if ($row['month'] === $month) {
+            $depositValues[] = floatval($row['total_deposit']);
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $depositValues[] = 0;
+    }
+    
+    // Find booking count for this month
+    $found = false;
+    foreach ($bookingData as $row) {
+        if ($row['month'] === $month) {
+            $bookingValues[] = intval($row['total_bookings']);
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $bookingValues[] = 0;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,15 +107,9 @@ $equivalent_money = $points / 10; // 10 points = 1 Ksh
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>User Dashboard - Modern Redesign</title>
-
-  <!-- External CSS -->
   <link rel="stylesheet" href="../assets/css/dashboard_new.css">
-
-  <!-- Ionicons for icons -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
-  <!-- Chart.js library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -57,9 +122,8 @@ $equivalent_money = $points / 10; // 10 points = 1 Ksh
       <ul>
         <li><a href="dashboard.php"><ion-icon name="home-outline"></ion-icon> Dashboard</a></li>
         <li><a href="listings.php"><ion-icon name="bed-outline"></ion-icon>Available AirBNB</a></li>
-        <li><a href="transactions.php"><ion-icon name="receipt-outline"></ion-icon> Transaction History</a></li>
+        <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
         <li><a href="deposit.php"><ion-icon name="card-outline"></ion-icon> Deposit Funds</a></li>
-        <li><a href="withdraw.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>
         <li><a href="redeem_points.php"><ion-icon name="gift-outline"></ion-icon> Redeem Points</a></li>
         <li><a href="messages.php"><ion-icon name="chatbubble-ellipses-outline"></ion-icon> Messages</a></li>
         <li><a href="settings.php"><ion-icon name="settings-outline"></ion-icon> Settings</a></li>
@@ -70,7 +134,6 @@ $equivalent_money = $points / 10; // 10 points = 1 Ksh
 
   <!-- Main Content -->
   <div class="main-content">
-    <!-- Top Header -->
     <header class="header">
       <div class="header-search">
         <input type="text" placeholder="Search...">
@@ -82,14 +145,11 @@ $equivalent_money = $points / 10; // 10 points = 1 Ksh
       </div>
     </header>
 
-    <!-- Overview / Welcome Section -->
     <section class="overview">
       <div class="welcome-card">
         <h1>Welcome, <?php echo htmlspecialchars($full_name); ?>!</h1>
         <p>Your wallet balance is <strong>Ksh <?php echo number_format($balance, 2); ?></strong></p>
       </div>
-
-      <!-- Info Cards -->
       <div class="info-cards">
         <div class="info-card">
           <ion-icon name="wallet-outline"></ion-icon>
@@ -115,45 +175,80 @@ $equivalent_money = $points / 10; // 10 points = 1 Ksh
       </div>
     </section>
 
-    <!-- Quick Action Buttons -->
-    <section class="actions">
-      <div class="action-card">
-        <a href="transactions.php">
-          <ion-icon name="receipt-outline"></ion-icon>
-          <span>Transaction History</span>
-        </a>
-      </div>
-      <div class="action-card">
-        <a href="deposit.php">
-          <ion-icon name="card-outline"></ion-icon>
-          <span>Deposit Funds</span>
-        </a>
-      </div>
-      <div class="action-card">
-        <a href="withdraw.php">
-          <ion-icon name="cash-outline"></ion-icon>
-          <span>Withdraw Funds</span>
-        </a>
-      </div>
-      <div class="action-card">
-        <a href="redeem_points.php">
-          <ion-icon name="gift-outline"></ion-icon>
-          <span>Redeem Points</span>
-        </a>
-      </div>
-    </section>
-
     <!-- Chart Section -->
     <section class="chart-section">
       <h3>Transaction Trends</h3>
       <canvas id="transactionChart"></canvas>
     </section>
 
-    <!-- Example Footer or Navbar Root -->
     <?php include '../includes/navbarroot.php'; ?>
   </div>
 
-  <!-- External JavaScript -->
+  <script>
+  var labels = <?php echo json_encode($labels); ?>;
+  var depositValues = <?php echo json_encode($depositValues); ?>;
+  var bookingValues = <?php echo json_encode($bookingValues); ?>;
+
+  var ctx = document.getElementById('transactionChart').getContext('2d');
+  var transactionChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Deposits (Ksh)',
+          data: depositValues,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: false,
+          tension: 0.1,
+          yAxisID: 'y'       // Link to the default (left) y-axis
+        },
+        {
+          label: 'Bookings',
+          data: bookingValues,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          fill: false,
+          tension: 0.1,
+          yAxisID: 'y1'      // Link to the second (right) y-axis
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          type: 'linear',
+          position: 'left',
+          title: {
+            display: true,
+            text: 'Deposits (Ksh)'
+          }
+        },
+        y1: {
+          beginAtZero: true,
+          type: 'linear',
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Number of Bookings'
+          },
+          grid: {
+            drawOnChartArea: false // keeps the grid lines from overlapping
+          }
+        }
+      }
+    }
+  });
+</script>
+
   <script src="../assets/js/dashboard_new.js"></script>
 </body>
 </html>

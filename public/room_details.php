@@ -33,20 +33,41 @@ if (!$room) {
     die("Room not found.");
 }
 
-// Variable to hold a success message
-$successMessage = "";
+// Variable to hold a message for feedback (success or error)
+$feedbackMessage = "";
 
 // Process booking submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the number of days from form input
     $days = isset($_POST['days']) ? (int)$_POST['days'] : 1;
-    
-    // Calculate price with discount if booking more than 3 days
+
+    // Define discount rate (10% discount)
+    $discount_rate = 0.10;
+    $apply_discount = false;
+
+    // Condition 1: Booking is for 4 or more days
+    if ($days >= 4) {
+        $apply_discount = true;
+    } else {
+        // Condition 2: Check if the user has booked this same room at least twice already
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE user_id = ? AND room_id = ?");
+        $stmt->execute([$user_id, $room_id]);
+        $previousBookings = $stmt->fetchColumn();
+        // If there are already 2 bookings, this is the third booking and discount applies
+        if ($previousBookings >= 2) {
+            $apply_discount = true;
+        }
+    }
+
+    // Get the room price (price per day)
     $room_price = $room['price'];
-    $discount_rate = 0.10; // 10% discount
-    if ($days > 3) {
+
+    // Apply discount if eligible
+    if ($apply_discount) {
         $room_price = $room_price - ($room_price * $discount_rate);
     }
+
+    // Calculate the total cost
     $total_cost = $room_price * $days;
 
     try {
@@ -79,11 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Commit transaction
         $pdo->commit();
 
-        $successMessage = "Booking successful! Total cost: ksh. " . number_format($total_cost, 2);
+        $feedbackMessage = "Booking successful! Total cost: ksh. " . number_format($total_cost, 2) . ". Available balance: ksh. " . number_format($new_balance, 2);
     } catch (Exception $e) {
         // Rollback transaction if any error occurs
         $pdo->rollBack();
-        $successMessage = "Error: " . $e->getMessage();
+        $feedbackMessage = "Error: " . $e->getMessage();
     }
 }
 
@@ -130,7 +151,7 @@ $profile_picture = $user && !empty($user["profile_picture"])
     .booking-form button:hover {
       background-color: #1c193f;
     }
-    /* Style for the success or error message */
+    /* Style for the feedback message */
     .message {
       max-width: 400px;
       margin: 20px auto;
@@ -195,10 +216,10 @@ $profile_picture = $user && !empty($user["profile_picture"])
         <p>Complete your booking by filling out the form below.</p>
       </div>
 
-      <!-- Display success or error message if available -->
-      <?php if (!empty($successMessage)): ?>
-        <div class="message <?php echo (strpos($successMessage, "successful") !== false) ? "success" : "error"; ?>">
-          <?php echo htmlspecialchars($successMessage); ?>
+      <!-- Display feedback message if available -->
+      <?php if (!empty($feedbackMessage)): ?>
+        <div class="message <?php echo (strpos($feedbackMessage, "successful") !== false) ? "success" : "error"; ?>">
+          <?php echo htmlspecialchars($feedbackMessage); ?>
         </div>
       <?php endif; ?>
 
@@ -206,7 +227,7 @@ $profile_picture = $user && !empty($user["profile_picture"])
         <h2>Book <?php echo htmlspecialchars($room['name']); ?></h2>
         <p><?php echo htmlspecialchars($room['description']); ?></p>
         <p>Price per day: ksh. <?php echo number_format($room['price'], 2); ?></p>
-        <p>Note: Book for more than 3 days to receive a 10% discount!</p>
+        <p>Note: Book for 4 or more days, or if this is your third booking for this room, to receive a 10% discount!</p>
         <form method="POST" action="">
           <label for="days">Number of Days:</label>
           <input type="number" id="days" name="days" min="1" value="1" required>
