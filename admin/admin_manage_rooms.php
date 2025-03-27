@@ -117,8 +117,19 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     /* Table Styles */
     table {
       width: 100%;
+      table-layout: fixed; /* Ensures each column has a fixed width */
       border-collapse: collapse;
     }
+
+    table th, table td {
+      word-wrap: break-word;     /* Breaks long words onto new lines */
+      overflow-wrap: break-word; /* Alternative property name */
+      white-space: normal;       /* Ensures wrapping is allowed */
+      text-align: center;        /* Keep your original center alignment */
+      padding: 10px;
+      border: 1px solid #ddd;    /* If you want borders on each cell */
+    }
+
     table thead {
       background: var(--blue);
       color: var(--white);
@@ -137,7 +148,10 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     table tbody td {
       padding: 10px;
       text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
+
     /* Action Buttons */
     .action-btn {
       padding: 5px 10px;
@@ -156,6 +170,12 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background: red;
       color: var(--white);
     }
+    .description-cell {
+  max-width: 250px; /* Adjust as needed */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
   </style>
   <!-- Ionicons (for icons) -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

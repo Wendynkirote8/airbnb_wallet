@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<?php include '../includes/navbar.php'; ?>
+<?php include '../includes/navbar_admin.php'; ?>
 
 <h2>Add a New Listing</h2>
 <form action="" method="POST" enctype="multipart/form-data">

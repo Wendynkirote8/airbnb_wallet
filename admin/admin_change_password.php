@@ -48,7 +48,7 @@ try {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <?php include '../includes/navbar.php'; ?>
+  <<?php include '../includes/navbar_admin.php'; ?>
   <div class="container mt-4">
     <h2>Change User Password</h2>
     <?php if (!empty($error)): ?>

@@ -169,54 +169,7 @@ try {
     <div class="sidebar-brand">
       <h2>weshPAY</h2>
     </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <!-- Link to your main dashboard -->
-        <li>
-          <a href="dashboard.php">
-            <ion-icon name="grid-outline"></ion-icon>
-            Dashboard
-          </a>
-        </li>
-        <!-- Additional navigation links -->
-        <li>
-          <a href="#">
-            <ion-icon name="bed-outline"></ion-icon>
-            Available AirBNB
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <ion-icon name="chatbubble-outline"></ion-icon>
-            Messages
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <ion-icon name="help-outline"></ion-icon>
-            Help
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <ion-icon name="settings-outline"></ion-icon>
-            Settings
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-            Password
-          </a>
-        </li>
-        <li>
-          <a href="logout.php">
-            <ion-icon name="log-out-outline"></ion-icon>
-            Sign Out
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <?php include '../includes/navbar.php'; ?>
   </aside>
 
   <!-- =============== Main Content ================ -->

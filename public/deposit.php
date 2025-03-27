@@ -163,19 +163,7 @@ try {
     <div class="sidebar-brand">
       <h2>weshPAY</h2>
     </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a href="dashboard.php"><ion-icon name="grid-outline"></ion-icon> Dashboard</a></li>
-        <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
-        <!-- Highlight deposit as active -->
-        <li><a href="deposit.php" class="active"><ion-icon name="card-outline"></ion-icon> Deposit Funds</a></li>
-        <!-- <li><a href="withdraw.php"><ion-icon name="cash-outline"></ion-icon> Withdraw Funds</a></li>-->
-        <li><a href="redeem_points.php"><ion-icon name="gift-outline"></ion-icon> Redeem Points</a></li>
-        <li><a href="messages.php"><ion-icon name="chatbubble-ellipses-outline"></ion-icon> Messages</a></li>
-        <li><a href="settings.php"><ion-icon name="settings-outline"></ion-icon> Settings</a></li>
-        <li><a href="logout.php"><ion-icon name="log-out-outline"></ion-icon> Sign Out</a></li>
-      </ul>
-    </nav>
+    <?php include '../includes/navbar.php'; ?>
   </aside>
 
   <!-- =============== Main Content ================ -->
