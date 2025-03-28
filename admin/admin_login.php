@@ -2,14 +2,19 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 session_start();
 require_once '../config/db_connect.php';
 
 $error = ""; // Initialize error variable
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = trim(filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING));
+    // Replace FILTER_SANITIZE_STRING with FILTER_SANITIZE_SPECIAL_CHARS
+    $username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_SPECIAL_CHARS);
     $password = $_POST["password"];
+
+    // Trim to remove any leading/trailing whitespace
+    $username = trim($username);
 
     try {
         // Query the admins table for a matching username.
@@ -37,7 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+      rel="stylesheet"
+    >
     <style>
         body {
             display: flex;
@@ -60,7 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="login-container">
         <h2 class="text-center">Admin Login</h2>
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
         <?php endif; ?>
 
         <!-- Disable autocomplete for the form -->

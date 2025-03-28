@@ -35,70 +35,240 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .register-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - weshPAY</title>
+  <meta name="description" content="Register for weshPAY, your modern Airbnb E-Wallet solution." />
+  <link rel="icon" href="path/to/favicon.ico" />
+  
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    /* Base Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(45deg, #f7f7f7, #eaeaea);
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+    /* Header */
+    header {
+      padding: 20px 50px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+    nav a {
+      text-decoration: none;
+      color: #FF5A5F;
+      font-size: 16px;
+      margin-left: 20px;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #e14b50;
+    }
+    /* Landscape Container */
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px;
+    }
+    .landscape-container {
+      display: flex;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+    }
+    /* Left Side Image */
+    .image-section {
+      flex: 1;
+      background: #ccc; /* Fallback background */
+    }
+    .image-section img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Right Side Form */
+    .form-section {
+      flex: 1;
+      padding: 40px;
+    }
+    .form-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group input[type="password"]:focus,
+    .form-group input[type="file"]:focus {
+      outline: none;
+      border-color: #FF5A5F;
+    }
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #FF5A5F;
+      color: #fff;
+      text-align: center;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-submit:hover {
+      background: #e14b50;
+      transform: scale(1.02);
+    }
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background: #eaeaea;
+      font-size: 14px;
+      color: #555;
+    }
+    /* Responsive: Stack sections on small screens */
+    @media (max-width: 768px) {
+      .landscape-container {
+        flex-direction: column;
+      }
+      .image-section {
+        height: 200px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="register-container">
-        <h2 class="text-center">Register</h2>
+  <!-- Header / Navigation -->
+  <header>
+    <div class="logo">weshPAY</div>
+    <nav>
+      <a href="login.php">Sign In</a>
+      <a href="register.php">Register</a>
+    </nav>
+  </header>
+  
+  <!-- Main Content -->
+  <main>
+    <div class="landscape-container">
+      <!-- Left Image Section -->
+      <div class="image-section">
+        <!-- Replace with your landscape image -->
+        <img src="../uploads/landing_page/real-estate.jpg" alt="Registration Landscape" />
+      </div>
+      <!-- Right Form Section -->
+      <div class="form-section">
+        <h2>Register</h2>
 
         <?php if ($error): ?>
-            <div class="alert alert-danger"><?php echo $error; ?></div>
+          <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
         
         <?php if ($success): ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
+          <div class="alert alert-success"><?php echo $success; ?></div>
         <?php endif; ?>
 
         <form action="register.php" method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="full_name" class="form-label">Full Name</label>
-                <input type="text" name="full_name" class="form-control" id="full_name" placeholder="Enter your full name" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3">
-                <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter your phone number" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
-            </div>
-            <div class="mb-3">
-                <label for="profile_picture" class="form-label">Profile Picture</label>
-                <input type="file" name="profile_picture" class="form-control" id="profile_picture" accept="image/*">
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Register</button>
+          <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <input type="text" name="full_name" id="full_name" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" name="phone" id="phone" placeholder="Enter your phone number" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Enter your password" required>
+          </div>
+          <div class="form-group">
+            <label for="profile_picture">Profile Picture</label>
+            <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+          </div>
+          <button type="submit" class="btn-submit">Register</button>
         </form>
-
-        <div class="text-center mt-3">
-            <a href="login.php">Already have an account? Login here</a>
+        <div class="message">
+          <p>Already have an account? <a href="login.php">Login here</a></p>
         </div>
+      </div>
     </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    &copy; <?php echo date("Y"); ?> weshPAY. All rights reserved.
+  </footer>
 </body>
 </html>
