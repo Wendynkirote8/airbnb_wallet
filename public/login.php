@@ -72,13 +72,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     nav a {
       text-decoration: none;
-      color: #FF5A5F;
+      color: #2a2185;
       font-size: 16px;
       margin-left: 20px;
       transition: color 0.3s;
     }
     nav a:hover {
-      color: #e14b50;
+      color: #1c193f;
     }
     /* Landscape Container */
     main {
@@ -136,13 +136,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     .form-group input[type="email"]:focus,
     .form-group input[type="password"]:focus {
       outline: none;
-      border-color: #FF5A5F;
+      border-color: #1c193f;
     }
     .btn-submit {
       display: block;
       width: 100%;
       padding: 12px;
-      background: #FF5A5F;
+      background: #2a2185;
       color: #fff;
       text-align: center;
       border: none;
@@ -153,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       transition: background 0.3s, transform 0.2s;
     }
     .btn-submit:hover {
-      background: #e14b50;
+      background: #1c193f;
       transform: scale(1.02);
     }
     .additional-links {
@@ -162,12 +162,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       font-size: 14px;
     }
     .additional-links a {
-      color: #FF5A5F;
+      color: #2a2185;
       text-decoration: none;
       transition: color 0.3s;
     }
     .additional-links a:hover {
-      color: #e14b50;
+      color: #1c193f;
     }
     /* Footer */
     footer {
