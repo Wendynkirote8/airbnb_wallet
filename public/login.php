@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <header>
     <div class="logo">weshPAY</div>
     <nav>
+      <a href="landing.php">Home</a>
       <a href="register.php">Register</a>
       <a href="login.php">Login</a>
     </nav>
@@ -103,17 +104,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="form-group">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" placeholder="Enter your password" required>
-          </div>
+          </div><br>
           <button type="submit" class="btn-submit">Login</button>
-        </form>
+        </form><br>
         <!-- Google Login Button -->
         <div class="google-login">
           <a href="google_login.php"><i class="fab fa-google"></i> Sign in with Google</a>
         </div>
         <div class="additional-links">
-          <p><a href="forgot_password.php">Forgot Password?</a></p>
-          <p><a href="register.php">Don't have an account? Register here</a></p>
+          <p><a href="forgot_password.php">Forgot Password?</a></p><br>
+          <p>Don't have an account? <a href="register.php"> Register here</a></p>
           <p>
+          <br>
+          <br>
             <a href="../admin/admin_login.php" style="display:inline-block; padding: 8px 16px; background: #6c757d; color: #fff; border-radius: 5px; text-decoration: none;">Login as Admin</a>
           </p>
         </div>

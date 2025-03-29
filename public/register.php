@@ -58,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <header>
     <div class="logo">weshPAY</div>
     <nav>
+      <a href="landing.php">Home</a>
       <a href="login.php">Sign In</a>
       <a href="register.php">Register</a>
     </nav>
@@ -103,21 +104,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="form-group">
             <label for="profile_picture">Profile Picture</label>
             <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
-          </div>
+          </div><br>
           <button type="submit" class="btn-submit">Register</button>
         </form>
 
         <!-- OR: Continue with Google -->
         <div style="text-align: center; margin: 1rem 0;">
-          <p>Or register with:</p>
+          <p>Or register with:</p><br>
           <a href="google_register.php" 
              style="display: inline-block; padding: 10px 20px; background: #4285F4; color: #fff; border-radius: 5px; text-decoration: none;">
             <i class="fab fa-google"></i> Continue with Google
-          </a>
+          </a><br>
         </div>
 
         <div class="message">
-          <p>Already have an account? <a href="login.php">Login here</a></p>
+          <p>Already have an account? <a href="login.php">Login here</a></p><br>
         </div>
       </div>
     </div>

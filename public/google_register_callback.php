@@ -60,7 +60,6 @@ if (isset($_GET['code'])) {
             exit;
         } else {
             // Create a new user record.
-            // Using a dummy password since Google OAuth users don't use passwords.
             $dummyPass = password_hash('google_oauth_user', PASSWORD_DEFAULT);
             $stmtInsert = $db->prepare("
                 INSERT INTO users (full_name, email, google_id, phone, password_hash)
@@ -74,7 +73,7 @@ if (isset($_GET['code'])) {
                 'pass'          => $dummyPass
             ]);
             $_SESSION['success'] = "Registration successful! Please log in.";
-            header("Location: register.php");
+            header("Location: login.php");
             exit;
         }
     } else {

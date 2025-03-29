@@ -18,6 +18,7 @@ $client->setRedirectUri($redirectUri);
 $client->addScope("email");
 $client->addScope("profile");
 
+$client->setState('login');
 $authUrl = $client->createAuthUrl();
 header("Location: $authUrl");
 exit;
