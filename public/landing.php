@@ -1,7 +1,6 @@
 <?php
 session_start();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,182 +8,250 @@ session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>weshPAY – Airbnb E-Wallet</title>
   <meta name="description" content="Manage your vacation finances easily and securely with the new weshPAY E-Wallet for Airbnb.">
-  <link rel="icon" href="path/to/favicon.ico" />
   
   <!-- Google Font: Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
   
   <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  
   <!-- Leaflet CSS for map integration -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+
+  <!-- Flatpickr CSS for the date pickers -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+  />
+
+  <!-- External CSS (Adjust path as needed) -->
+  <link rel="stylesheet" href="../assets/css/landing.css">
 
   <style>
     /* -------------------------------- */
-    /*          GLOBAL STYLES           */
+    /*          GLOBAL & RESETS         */
     /* -------------------------------- */
-    *, *::before, *::after {
-      box-sizing: border-box;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
     body {
       font-family: 'Poppins', sans-serif;
+      background-color: #f8f8f8;
       color: #333;
-      background: linear-gradient(135deg, #ffffff, #f2f2f2);
-      background-size: cover;
-      position: relative;
-      min-height: 100vh;
-      scroll-behavior: smooth;
     }
-    h1, h2, h3, h4 {
-      color: #2a2185; /* Keep your primary theme color */
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
     }
 
     /* -------------------------------- */
-    /*            HEADER NAV            */
+    /*          TOP NAVIGATION          */
     /* -------------------------------- */
-    header {
-      width: 100%;
-      padding: 20px 50px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1000;
+    .top-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background-color: #fff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .left-nav, .center-search, .right-nav {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
     .logo {
-      font-size: 28px;
+      font-size: 1.5rem;
       font-weight: 600;
-      color: #2a2185;
+      color: #2a2185; /* Airbnb-like color */
     }
-    nav ul {
+    .nav-links {
       list-style: none;
       display: flex;
-      gap: 20px;
-      align-items: center;
+      gap: 1rem;
     }
-    nav ul li a {
-      text-decoration: none;
+    .nav-links li a {
+      font-weight: 500;
       color: #333;
-      font-size: 16px;
-      transition: color 0.3s;
     }
-    nav ul li a:hover {
+    .nav-links li a:hover {
       color: #2a2185;
     }
-    .menu-toggle {
-      display: none;
-      font-size: 28px;
-      cursor: pointer;
-      background: none;
+
+    /* Centered Search Bar */
+    .center-search {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50px;
+      padding: 0.4rem 0.8rem;
+      gap: 0.5rem;
+    }
+    .center-search input {
       border: none;
-      color: #333;
+      outline: none;
+      padding: 0.5rem;
+      width: 100px;
+      max-width: 120px;
+      font-size: 0.95rem;
     }
-    /* Button Styles */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: #2a2185;
+    .center-search input::placeholder {
+      color: #999;
+    }
+    .center-search button {
+      background-color: #2a2185;
       color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.2s;
-      cursor: pointer;
+      padding: 0.5rem 0.8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn:hover {
-      background: rgb(62, 55, 134);
-      transform: scale(1.05);
+    .center-search button:hover {
+      background-color: #2a2185;
+    }
+
+    /* Right Nav */
+    .right-nav a {
+      font-weight: 500;
+      color: #333;
+      margin-right: 0.5rem;
+    }
+    .right-nav a:hover {
+      color: #2a2185;
+    }
+
+    /* Profile Dropdown Container */
+    .profile-container {
+      position: relative;
+    }
+    .profile-dropdown {
+      position: absolute;
+      top: 45px; /* adjust to your header height */
+      right: 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      width: 200px;
+      display: none;
+      flex-direction: column;
+      padding: 0.5rem 0;
+      z-index: 9999;
+    }
+    .profile-dropdown.show {
+      display: flex;
+    }
+    .profile-dropdown a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #333;
+      font-size: 0.95rem;
+    }
+    .profile-dropdown a:hover {
+      background-color: #f7f7f7;
+    }
+    .profile-dropdown hr {
+      margin: 0.5rem 0;
+      border: none;
+      border-top: 1px solid #eee;
     }
 
     /* -------------------------------- */
-    /*        LISTINGS SECTION          */
+    /*        CATEGORY (TAB) BAR        */
+    /* -------------------------------- */
+    .category-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      overflow-x: auto; /* scroll if many items */
+      padding: 0.8rem 2rem;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .category-bar button {
+      border: none;
+      background-color: #fff;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+    .category-bar button:hover {
+      background-color: #f0f0f0;
+    }
+    .filters-btn {
+      margin-left: auto; /* push it to the right end */
+      border: 1px solid #ccc;
+    }
+
+    /* -------------------------------- */
+    /*         LISTINGS SECTION         */
     /* -------------------------------- */
     .listings {
-      padding: 120px 50px 50px; /* top padding accommodates the fixed header */
-      text-align: left;
-    }
-    .listings .section-container {
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
     }
     .section-title {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 1rem;
     }
-
-    /* Filter Bar */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: flex-end;
-      margin-bottom: 30px;
-    }
-    .filter-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .filter-item label {
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-    .filter-item input[type="number"],
-    .filter-item input[type="text"],
-    .filter-item input[type="date"],
-    .filter-item select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 0.95rem;
-      width: 180px;
-      max-width: 100%;
-    }
-
-    /* Map Container */
     .map-container {
       width: 100%;
       height: 400px;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 30px;
+      margin-bottom: 2rem;
     }
-
-    /* Listings Grid */
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
     }
+    /* Property Card */
     .listing-card {
-      background: #fff;
-      border-radius: 10px;
+      background-color: #fff;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
       position: relative;
     }
     .listing-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-3px);
     }
     .listing-card img {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
     }
     .listing-details {
-      padding: 15px;
+      padding: 1rem;
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -199,10 +266,9 @@ session_start();
       margin-bottom: 5px;
     }
     .listing-title {
-      font-size: 1.2rem;
-      color: #333;
-      margin-bottom: 5px;
+      font-size: 1rem;
       font-weight: 600;
+      margin-bottom: 5px;
     }
     .listing-rating {
       color: #2a2185;
@@ -213,7 +279,7 @@ session_start();
       font-size: 1rem;
     }
     .listing-rating i {
-      color: #FFD700; /* Star color (gold) */
+      color: #FFD700; /* Star color */
     }
     .listing-price {
       font-size: 1rem;
@@ -256,366 +322,352 @@ session_start();
     /* -------------------------------- */
     footer {
       text-align: center;
-      padding: 20px;
-      color: #555;
+      padding: 1rem;
+      background-color: #fff;
+      color: #666;
       font-size: 0.9rem;
-      background: #eaeaea;
-      margin-top: 40px;
+      margin-top: 2rem;
     }
 
     /* -------------------------------- */
-    /*        RESPONSIVE STYLES         */
+    /*          REGION MODAL            */
     /* -------------------------------- */
-    @media (max-width: 1024px) {
-      header {
-        padding: 20px;
-      }
-      nav ul {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 70px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        width: 200px;
-        text-align: left;
-        padding: 20px;
-        border-radius: 10px;
-      }
-      nav ul.active {
-        display: flex;
-      }
-      nav ul li {
-        margin: 15px 0;
-      }
-      .menu-toggle {
-        display: block;
-      }
-      .filters {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .map-container {
-        height: 300px;
-      }
+    .region-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .region-modal.show {
+      display: flex; /* display flex so we can center content */
+    }
+    .region-modal-content {
+      background-color: #fff;
+      width: 90%;
+      max-width: 700px;
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+    }
+    .region-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .region-modal-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .region-modal-close {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .region-modal-body {
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .region-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .region-tab {
+      background-color: transparent;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .region-tab.active {
+      background-color: #f0f0f0;
+    }
+    .region-tab:hover {
+      background-color: #f0f0f0;
+    }
+    .region-tab-content {
+      display: block;
+    }
+    .translation-toggle {
+      margin-bottom: 1rem;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .toggle-slider {
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      background-color: #ccc;
+      border-radius: 22px;
+      position: relative;
+      vertical-align: middle;
+      margin-left: 0.5rem;
+    }
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 2px;
+      left: 2px;
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    #translationToggle:checked + .toggle-slider::before {
+      transform: translateX(18px);
+    }
+    #translationToggle:checked + .toggle-slider {
+      background-color: #2a2185; /* your theme color */
+    }
+    .language-list, .currency-list {
+      list-style: none;
+      margin-top: 0.5rem;
+      padding-left: 0;
+    }
+    .language-list li, .currency-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* -------------------------------- */
+    /*        FLATPICKR OVERRIDES       */
+    /* -------------------------------- */
+    /* Use Poppins in the calendar */
+    .flatpickr-calendar,
+    .flatpickr-calendar * {
+      font-family: 'Poppins', sans-serif !important;
+    }
+    /* Calendar container styling */
+    .flatpickr-calendar {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    /* Top month navigation bar */
+    .flatpickr-months {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background: #fff;
+    }
+    .flatpickr-months .flatpickr-month {
+      margin: 0 0.5rem;
+    }
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+      line-height: 1;
+      cursor: pointer;
+      color: #333;
+      opacity: 0.8;
+    }
+    .flatpickr-months .flatpickr-prev-month:hover,
+    .flatpickr-months .flatpickr-next-month:hover {
+      opacity: 1;
+    }
+    /* Month & Year text */
+    .cur-month {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .cur-year {
+      font-size: 0.9rem;
+    }
+    /* Weekday header (Mon, Tue, etc.) */
+    .flatpickr-weekdays {
+      background: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-bottom: 1px solid #eee;
+    }
+    /* Individual day cells */
+    .flatpickr-day {
+      height: 36px;
+      line-height: 36px;
+      width: 36px;
+      margin: 0.1rem;
+      font-size: 0.9rem;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    /* Hover effect */
+    .flatpickr-day:hover {
+      background: #f0f0f0;
+    }
+    /* Selected date range styling */
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange {
+      background: #2a2185 !important; /* or your brand color */
+      color: #fff !important;
+    }
+    /* Range in-between highlight */
+    .flatpickr-day.inRange {
+      background: rgba(42, 33, 133, 0.15);
+      color: #333;
+    }
+    /* Disabled days (past, etc.) */
+    .flatpickr-day.disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+    /* Make sure alt input has consistent font */
+    .flatpickr-input[readonly] {
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <!-- Header / Navigation -->
-  <header>
-    <div class="logo">weshPAY</div>
-    <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-    <nav>
-      <ul>
-        <li><a href="#listings">Home</a></li>
-        <li><a href="login.php" class="btn"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
-        <li><a href="register.php" class="btn"><i class="fas fa-user-plus"></i> Register</a></li>
+
+  <!-- TOP NAV BAR -->
+  <header class="top-header">
+    <!-- Left side: Logo + "Homes" / "Experiences" -->
+    <div class="left-nav">
+      <div class="logo">weshPAY</div>
+      <ul class="nav-links">
+        <li><a href="#">Homes</a></li>
+        <li><a href="#">Experiences</a></li>
       </ul>
-    </nav>
+    </div>
+
+    <!-- Centered Search Bar (Single Range Input) -->
+    <div class="center-search">
+      <input type="text" id="searchLocation" placeholder="Where (Map area)" />
+      <input type="text" id="searchDateRange" placeholder="Add dates" />
+      <input type="text" id="searchGuests" placeholder="Add guests" />
+      <button id="searchBtn"><i class="fas fa-search"></i></button>
+    </div>
+
+    <!-- Right side: "Pay for your room", globe, user icon, etc. -->
+    <div class="right-nav">
+      <a href="#">Pay for your room</a>
+      <i class="fas fa-globe" id="regionIcon"></i>
+      
+      <!-- Profile container with dropdown -->
+      <div class="profile-container">
+        <i class="fas fa-user-circle fa-lg" id="profileIcon"></i>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="register.php">Sign up</a>
+          <a href="login.php">Log in</a>
+          <hr />
+          <a href="#">Gift cards</a>
+          <a href="#">Airbnb your home</a>
+          <a href="#">Host an experience</a>
+          <a href="#">Help Center</a>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <!-- Listings Section -->
+  <!-- CATEGORY BAR (TABS) -->
+  <div class="category-bar">
+    <button>Bed & Breakfasts</button>
+    <button>Tiny Homes</button>
+    <button>Countryside</button>
+    <button>Beach</button>
+    <button>Beachfront</button>
+    <button>Luxe</button>
+    <button>Amazing views</button>
+    <!-- etc... -->
+    <button class="filters-btn">Filters</button>
+  </div>
+
+  <!-- Region / Language Modal -->
+  <div class="region-modal" id="regionModal">
+    <div class="region-modal-content">
+      <div class="region-modal-header">
+        <h2>Language and region</h2>
+        <span class="region-modal-close" id="regionClose">&times;</span>
+      </div>
+      <div class="region-modal-body">
+        <!-- Tabs -->
+        <div class="region-tabs">
+          <button class="region-tab active" data-target="langTab">Language and region</button>
+          <button class="region-tab" data-target="currencyTab">Currency</button>
+        </div>
+
+        <!-- Tab Content: Language & Region -->
+        <div class="region-tab-content" id="langTab">
+          <div class="translation-toggle">
+            <label class="toggle-label" for="translationToggle">
+              Translation
+              <input type="checkbox" id="translationToggle" />
+              <span class="toggle-slider"></span>
+            </label>
+            <p>Automatically translate descriptions and reviews to English.</p>
+          </div>
+
+          <h3>Choose a language and region</h3>
+          <ul class="language-list">
+            <li>English (United States)</li>
+            <li>English (Canada)</li>
+            <li>Bahasa Indonesia</li>
+            <li>Deutsch</li>
+            <li>Español</li>
+            <li>Français</li>
+            <!-- Add as many as you like... -->
+          </ul>
+        </div>
+
+        <!-- Tab Content: Currency -->
+        <div class="region-tab-content" id="currencyTab" style="display: none;">
+          <h3>Select your currency</h3>
+          <ul class="currency-list">
+            <li>USD – US Dollar</li>
+            <li>EUR – Euro</li>
+            <li>KSH – Kenyan Shilling</li>
+            <li>GBP – British Pound</li>
+            <li>AUD – Australian Dollar</li>
+            <!-- etc... -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTINGS SECTION -->
   <section class="listings" id="listings">
-    <div class="section-container">
-      <h2 class="section-title">Bed & Breakfasts</h2>
+    <h2 class="section-title">Explore Stays</h2>
 
-      <!-- Filter & Sort Bar -->
-      <div class="filters">
-        <div class="filter-item">
-          <label for="locationSearch">Location</label>
-          <input type="text" id="locationSearch" placeholder="e.g. Diani Beach">
-        </div>
-        <div class="filter-item">
-          <label for="sortBy">Sort by</label>
-          <select id="sortBy">
-            <option value="none">None</option>
-            <option value="priceLow">Price (Low to High)</option>
-            <option value="priceHigh">Price (High to Low)</option>
-            <option value="ratingHigh">Rating (High to Low)</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <label for="minPrice">Min Price</label>
-          <input type="number" id="minPrice" placeholder="e.g. 1000">
-        </div>
-        <div class="filter-item">
-          <label for="maxPrice">Max Price</label>
-          <input type="number" id="maxPrice" placeholder="e.g. 10000">
-        </div>
-        <div class="filter-item">
-          <label for="checkIn">Check-in</label>
-          <input type="date" id="checkIn">
-        </div>
-        <div class="filter-item">
-          <label for="checkOut">Check-out</label>
-          <input type="date" id="checkOut">
-        </div>
-        <button class="btn" id="applyFilters">Apply</button>
-      </div>
+    <!-- Map -->
+    <div class="map-container" id="map"></div>
 
-      <!-- Map -->
-      <div class="map-container" id="map"></div>
+    <!-- Dynamic Listings Grid -->
+    <div class="listings-grid" id="listingsGrid">
+      <!-- Listing cards injected by JavaScript -->
+    </div>
 
-      <!-- Dynamic Listings Grid -->
-      <div class="listings-grid" id="listingsGrid">
-        <!-- Cards injected by JavaScript -->
-      </div>
-
-      <!-- Load More Button -->
-      <div class="load-more-container">
-        <button class="btn" id="loadMoreBtn">Load More</button>
-      </div>
+    <!-- Load More Button -->
+    <div class="load-more-container">
+      <button class="btn" id="loadMoreBtn">Load More</button>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer>
-    <p>&copy; <?php echo date("Y"); ?> weshPAY. All rights reserved.</p>
+    &copy; <?php echo date("Y"); ?> weshPAY. All rights reserved.
   </footer>
 
   <!-- Leaflet JS for map integration -->
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
-  <!-- Scripts -->
+  <!-- Flatpickr JS for the date pickers -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="../assets/js/landing.js"></script>
+
   <script>
-    // Sample data array for listings
-    const listingsData = [
-      {
-        id: 1,
-        location: "Diani Beach, Kenya",
-        rating: 5.0,
-        price: 6206,
-        favorite: true,
-        wishlist: false,  // whether user has 'hearted' it
-        image: "../uploads/landing_page/bedroom.jpg",
-        lat: -4.316667,
-        lng: 39.583333,
-        availabilityStart: "2025-05-01",
-        availabilityEnd:   "2025-05-15"
-      },
-      {
-        id: 2,
-        location: "Diani Beach, Kenya",
-        rating: 4.88,
-        price: 6206,
-        favorite: true,
-        wishlist: false,
-        image: "../uploads/landing_page/beach.jpg",
-        lat: -4.318000,
-        lng: 39.590000,
-        availabilityStart: "2025-04-20",
-        availabilityEnd:   "2025-05-10"
-      },
-      {
-        id: 3,
-        location: "Ukunda, Kenya",
-        rating: 4.81,
-        price: 4500,
-        favorite: false,
-        wishlist: false,
-        image: "../uploads/landing_page/login_landscape.jpg",
-        lat: -4.280000,
-        lng: 39.570000,
-        availabilityStart: "2025-05-05",
-        availabilityEnd:   "2025-05-12"
-      },
-      {
-        id: 4,
-        location: "Mombasa, Kenya",
-        rating: 4.7,
-        price: 5500,
-        favorite: false,
-        wishlist: false,
-        image: "../uploads/landing_page/landscape_register.jpg",
-        lat: -4.043477,
-        lng: 39.668206,
-        availabilityStart: "2025-06-01",
-        availabilityEnd:   "2025-06-10"
-      },
-      {
-        id: 5,
-        location: "Nairobi, Kenya",
-        rating: 4.9,
-        price: 7000,
-        favorite: false,
-        wishlist: false,
-        image: "../uploads/landing_page/about.jpg",
-        lat: -1.286389,
-        lng: 36.817223,
-        availabilityStart: "2025-05-10",
-        availabilityEnd:   "2025-05-20"
-      },
-      // Add more listings as needed...
-    ];
-
-    // Pagination variables
-    let currentPage = 1;
-    const listingsPerPage = 3;
-
-    // Leaflet map + markers
-    let map, markerGroup;
-
-    // On window load, initialize map & listings
-    window.addEventListener('load', () => {
-      initMap();
-      renderListings(listingsData);
-    });
-
-    // Initialize Leaflet map
-    function initMap() {
-      map = L.map('map').setView([-1.286389, 36.817223], 7); // center on Kenya
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-      }).addTo(map);
-
-      // Layer group to hold all markers
-      markerGroup = L.layerGroup().addTo(map);
-    }
-
-    // Render listings (with pagination & filters) in the DOM
-    function renderListings(fullList) {
-      const container = document.getElementById('listingsGrid');
-      container.innerHTML = ''; // Clear existing content
-
-      // Determine how many items to show based on pagination
-      const paginatedList = fullList.slice(0, currentPage * listingsPerPage);
-
-      // Clear existing markers from map
-      markerGroup.clearLayers();
-
-      paginatedList.forEach(item => {
-        // Create listing card
-        const card = document.createElement('div');
-        card.classList.add('listing-card');
-        card.innerHTML = `
-          <img src="${item.image}" alt="${item.location}">
-          <div class="listing-details">
-            ${ item.favorite ? '<div class="listing-favorite">Guest favorite</div>' : '' }
-            <div class="listing-title">${item.location}</div>
-            <div class="listing-rating">
-              <i class="fas fa-star"></i>
-              <span>${item.rating}</span>
-            </div>
-            <div class="listing-price">KSh ${item.price} / night</div>
-          </div>
-          <div class="wishlist-icon ${item.wishlist ? 'active' : ''}" 
-               onclick="toggleWishlist(${item.id})">
-            <i class="fas fa-heart"></i>
-          </div>
-        `;
-        container.appendChild(card);
-
-        // Add marker to map
-        const marker = L.marker([item.lat, item.lng]).addTo(markerGroup);
-        marker.bindPopup(`<strong>${item.location}</strong><br/>KSh ${item.price}/night`);
-      });
-
-      // Show/hide "Load More" button if there's more data
-      const loadMoreBtn = document.getElementById('loadMoreBtn');
-      if (currentPage * listingsPerPage >= fullList.length) {
-        loadMoreBtn.style.display = 'none';
-      } else {
-        loadMoreBtn.style.display = 'inline-block';
-      }
-    }
-
-    // Wishlist toggle
-    function toggleWishlist(id) {
-      const listing = listingsData.find(l => l.id === id);
-      if (listing) {
-        listing.wishlist = !listing.wishlist;
-      }
-      // Re-render with current filters & pagination
-      applyFilterAndSort();
-    }
-
-    // "Load More" pagination
-    document.getElementById('loadMoreBtn').addEventListener('click', () => {
-      currentPage++;
-      applyFilterAndSort();
-    });
-
-    // Filter & Sort logic
-    document.getElementById('applyFilters').addEventListener('click', () => {
-      // Reset pagination to page 1 on new filter
-      currentPage = 1;
-      applyFilterAndSort();
-    });
-
-    function applyFilterAndSort() {
-      // Make a copy of the original data
-      let filtered = [...listingsData];
-
-      const locationSearch = document.getElementById('locationSearch').value.trim().toLowerCase();
-      const sortBy = document.getElementById('sortBy').value;
-      const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
-      const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
-      const checkIn = document.getElementById('checkIn').value;
-      const checkOut = document.getElementById('checkOut').value;
-
-      // Filter by location
-      if (locationSearch) {
-        filtered = filtered.filter(item =>
-          item.location.toLowerCase().includes(locationSearch)
-        );
-      }
-
-      // Filter by price range
-      filtered = filtered.filter(item => item.price >= minPrice && item.price <= maxPrice);
-
-      // Filter by availability (date range overlap)
-      if (checkIn && checkOut) {
-        filtered = filtered.filter(item => datesOverlap(
-          checkIn,
-          checkOut,
-          item.availabilityStart,
-          item.availabilityEnd
-        ));
-      }
-
-      // Sort logic
-      if (sortBy === 'priceLow') {
-        filtered.sort((a, b) => a.price - b.price);
-      } else if (sortBy === 'priceHigh') {
-        filtered.sort((a, b) => b.price - a.price);
-      } else if (sortBy === 'ratingHigh') {
-        filtered.sort((a, b) => b.rating - a.rating);
-      }
-
-      // Finally, render with new data
-      renderListings(filtered);
-    }
-
-    // Helper function to check date overlap
-    function datesOverlap(checkIn, checkOut, availStart, availEnd) {
-      // Convert to numeric timestamps for comparison
-      const userStart = new Date(checkIn).getTime();
-      const userEnd   = new Date(checkOut).getTime();
-      const listingStart = new Date(availStart).getTime();
-      const listingEnd   = new Date(availEnd).getTime();
-
-      // Overlap occurs if the listing's start is <= user's end
-      // and the listing's end is >= user's start
-      return listingStart <= userEnd && listingEnd >= userStart;
-    }
-
-    // Mobile Menu Toggle
-    const menuToggle = document.querySelector(".menu-toggle");
-    const navMenu = document.querySelector("nav ul");
-
-    menuToggle.addEventListener("click", function() {
-      navMenu.classList.toggle("active");
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener("click", function(event) {
-      if (!menuToggle.contains(event.target) && !navMenu.contains(event.target)) {
-        navMenu.classList.remove("active");
-      }
-    });
+    
   </script>
 </body>
 </html>
