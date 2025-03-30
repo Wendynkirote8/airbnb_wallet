@@ -134,7 +134,8 @@ foreach ($labels as $month) {
   <meta charset="UTF-8">
   <title>Admin Dashboard - Wesh AirBNB Pay</title>
   <!-- External CSS -->
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <!-- <link rel="stylesheet" href="../assets/css/style.css"> -->
+  <link rel="stylesheet" href="../assets/css/admin_style.css">
   <!-- Ionicons (for icons) -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
@@ -142,91 +143,7 @@ foreach ($labels as $month) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Internal CSS for Dashboard Enhancements -->
   <style>
-    /* Container styling */
-    .content {
-      text-align: center;
-      padding: 20px;
-    }
-    .content h2 {
-      margin-bottom: 1rem;
-      color: var(--blue);
-    }
-    .content p {
-      margin-bottom: 1.5rem;
-    }
-    /* Create Admin Button */
-    .create-admin-container {
-      text-align: center;
-      margin: 2rem 0;
-    }
-    .create-admin-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.85rem 1.8rem;
-      background-color: var(--blue);
-      color: var(--white);
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-    .create-admin-btn:hover {
-      background-color: var(--blue2);
-      transform: scale(1.02);
-    }
-    /* Dashboard Summary Cards */
-    .card-container {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-top: 20px;
-      justify-content: center;
-    }
-    .card {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      flex: 1 1 200px;
-      padding: 1rem;
-      text-align: center;
-    }
-    .card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--blue);
-    }
-    .card p {
-      font-size: 1.2rem;
-      color: var(--black2);
-    }
-    /* Graph Container */
-    .graph-container {
-      max-width: 900px;
-      margin: 2rem auto;
-      background: var(--white);
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    /* Latest Transactions Section */
-    .transactions-container {
-      max-width: 900px;
-      margin: 2rem auto;
-      text-align: left;
-    }
-    .transactions-container h3 {
-      margin-bottom: 1rem;
-      color: var(--blue);
-    }
-    .transaction-item {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
+    
   </style>
 </head>
 <body>

@@ -536,7 +536,7 @@ session_start();
     <div class="left-nav">
       <div class="logo">weshPAY</div>
       <ul class="nav-links">
-        <li><a href="#">Homes</a></li>
+        <li><a href="landing.php">Homes</a></li>
         <li><a href="#">Experiences</a></li>
       </ul>
     </div>
@@ -551,7 +551,7 @@ session_start();
 
     <!-- Right side: "Pay for your room", globe, user icon, etc. -->
     <div class="right-nav">
-      <a href="#">Pay for your room</a>
+      <a href="login.php">Pay for your room</a>
       <i class="fas fa-globe" id="regionIcon"></i>
       
       <!-- Profile container with dropdown -->

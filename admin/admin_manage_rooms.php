@@ -185,15 +185,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="container">
     <!-- Navigation Sidebar -->
     <div class="navigation">
-      <h3>Admin Panel</h3>
-      <ul>
-        <li><a href="admin_dashboard.php">Dashboard Home</a></li>
-        <li><a href="admin_add_room.php">Add Room</a></li>
-        <li><a href="admin_manage_rooms.php" class="active-link">Manage Rooms</a></li>
-        <li><a href="admin_manage_users.php">Manage Users</a></li>
-        <li><a href="admin_change_password.php">Change User Password</a></li>
-        <li><a href="admin_transactions.php">Transactions</a></li>
-      </ul>
+    <?php include '../includes/navbar_admin.php'; ?>
     </div>
     <!-- Main Content Area -->
     <div class="main">

@@ -33,10 +33,10 @@ if (isset($_GET['code'])) {
         $googleEmail = $userInfo->email;
         $googleName  = $userInfo->name;
         
-        // Use default phone if not provided by Google.
+        // Use null for phone if not provided by Google.
         $googlePhone = (isset($userInfo->phone) && !empty($userInfo->phone))
                         ? $userInfo->phone 
-                        : '+254700000000';
+                        : null;
         
         try {
             // Connect to the database.
@@ -66,11 +66,11 @@ if (isset($_GET['code'])) {
                 VALUES (:uname, :email, :gid, :phone, :pass)
             ");
             $stmtInsert->execute([
-                'uname'         => $googleName,
-                'email'         => $googleEmail,
-                'gid'           => $googleId,
-                'phone'         => $googlePhone,
-                'pass'          => $dummyPass
+                'uname' => $googleName,
+                'email' => $googleEmail,
+                'gid'   => $googleId,
+                'phone' => $googlePhone,
+                'pass'  => $dummyPass
             ]);
             $_SESSION['success'] = "Registration successful! Please log in.";
             header("Location: login.php");

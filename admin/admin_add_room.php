@@ -198,7 +198,7 @@ $profile_picture = "../assets/imgs/default-profile.png";
   <div class="container">
     <!-- Navigation Sidebar -->
     <div class="navigation">
-    <?php include '../includes/navbar_admin.php'; ?>
+      <?php include '../includes/navbar_admin.php'; ?>
     </div>
 
     <!-- Main Content Area -->

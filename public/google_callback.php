@@ -56,56 +56,34 @@ if (isset($_GET['code'])) {
                 ]);
             }
 
-            // Check if device is remembered
-        if (!empty($_COOKIE['remember_2fa'])) {
-            $token = $_COOKIE['remember_2fa'];
-            $tokenHash = hash('sha256', $token);
-            $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-            $stmt = $db->prepare("SELECT * FROM trusted_devices WHERE user_id = :uid AND token_hash = :hash AND expires_at > NOW() AND user_agent = :ua");
-            $stmt->execute([
-                'uid' => $existingUser['user_id'],
-                'hash' => $tokenHash,
-                'ua' => $userAgent
-            ]);
-            $trusted = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($trusted) {
-                $_SESSION['user_id'] = $existingUser['user_id'];
-                $_SESSION['2fa_verified'] = true;
-                header("Location: dashboard.php");
-                exit;
-            }
-        }
-
-
-            // ✅ ALWAYS force 2FA check on every login
-            if (!empty($existingUser['totp_secret'])) {
+            // Enforce MFA on every login:
+            if (empty($existingUser['totp_secret'])) {
+                // User has not set up MFA yet.
+                // Redirect them to the MFA setup page.
                 $_SESSION['pending_2fa_user_id'] = $existingUser['user_id'];
-                unset($_SESSION['user_id']);          // Clear old login
-                unset($_SESSION['2fa_verified']);     // Clear 2FA flag
-                header("Location: verify_2fa.php");
+                header("Location: enable_2fa.php");
                 exit;
             } else {
-                // No 2FA: log them in
-                $_SESSION['user_id'] = $existingUser['user_id'];
-                $_SESSION['2fa_verified'] = true;
-                header("Location: dashboard.php");
+                // MFA is set up so force MFA verification every time.
+                $_SESSION['pending_2fa_user_id'] = $existingUser['user_id'];
+                unset($_SESSION['user_id']);      // Clear any old login session
+                unset($_SESSION['2fa_verified']);   // Ensure re-verification
+                header("Location: verify_2fa.php");
                 exit;
             }
         } else {
-            // User not found
+            // User not found: prompt to register.
             $_SESSION['error'] = "User with that Google account not found. Please register.";
-            header("Location: login.php");
+            header("Location: register.php");
             exit;
         }
     } else {
         $_SESSION['error'] = "Error retrieving token: " . $token["error"];
-        header("Location: login.php");
+        header("Location: register.php");
         exit;
     }
 } else {
     $_SESSION['error'] = "No code parameter provided.";
-    header("Location: login.php");
+    header("Location: register.php");
     exit;
 }
