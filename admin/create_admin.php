@@ -65,153 +65,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta charset="UTF-8">
   <title>Create New Admin - Wesh AirBNB Pay</title>
   <!-- External CSS (if any) -->
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin_style.css">
   <!-- Ionicons for icons -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <!-- Internal CSS for this page -->
   <style>
-    /* Centered Form Container */
-    .form-container {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: #fff;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    }
-    .form-container h2 {
-      margin-bottom: 1rem;
-      color: var(--blue);
-    }
-    /* Alert messages */
-    .custom-alert {
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 4px;
-      font-weight: 500;
-      line-height: 1.3;
-    }
-    .custom-alert.alert-error {
-      background-color: #f8d7da;
-      color: #842029;
-    }
-    .custom-alert.alert-success {
-      background-color: #d1e7dd;
-      color: #0f5132;
-    }
-    /* Form fields */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: var(--blue);
-    }
-    .form-group input {
-      width: 100%;
-      padding: 0.7rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-    }
-    .form-group input:focus {
-      border-color: var(--blue);
-      outline: none;
-    }
-    /* Submit Button */
-    .custom-btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      margin-top: 0.5rem;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--blue);
-      color: var(--white);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .custom-btn:hover {
-      background-color: var(--blue2);
-    }
+    
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Navigation Sidebar -->
-    <div class="navigation">
-      <ul>
-        <li>
-          <a href="#">
-            <span class="icon">
-              <ion-icon name="home-outline"></ion-icon>
-            </span>
-            <span class="title">Wesh Pay</span>
-          </a>
-        </li>
-        <li>
-          <a onclick="window.location.href='admin_dashboard.php';" style="cursor: pointer;">
-            <span class="icon">
-              <ion-icon name="grid-outline"></ion-icon>
-            </span>
-            <span class="title">Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="admin_add_room.php">
-            <span class="icon">
-              <ion-icon name="bed-outline"></ion-icon>
-            </span>
-            <span class="title">Add Room</span>
-          </a>
-        </li>
-        <li>
-          <a href="admin_manage_rooms.php">
-            <span class="icon">
-              <ion-icon name="list-outline"></ion-icon>
-            </span>
-            <span class="title">Manage Rooms</span>
-          </a>
-        </li>
-        <li>
-          <a href="admin_manage_users.php">
-            <span class="icon">
-              <ion-icon name="people-outline"></ion-icon>
-            </span>
-            <span class="title">Manage Users</span>
-          </a>
-        </li>
-        <li>
-          <a href="admin_change_password.php">
-            <span class="icon">
-              <ion-icon name="lock-closed-outline"></ion-icon>
-            </span>
-            <span class="title">Change Password</span>
-          </a>
-        </li>
-        <li>
-          <a href="admin_transactions.php">
-            <span class="icon">
-              <ion-icon name="receipt-outline"></ion-icon>
-            </span>
-            <span class="title">Transactions</span>
-          </a>
-        </li>
-        <li>
-          <a onclick="window.location.href='../public/logout_admin.php';" style="cursor: pointer;">
-            <span class="icon">
-              <ion-icon name="log-out-outline"></ion-icon>
-            </span>
-            <span class="title">Sign Out</span>
-          </a>
-        </li>
-      </ul>
+  <div class="navigation">
+    <?php include '../includes/navbar_admin.php'; ?>
     </div>
-    <!-- Main Content Area -->
     <div class="main">
       <!-- Topbar -->
       <div class="topbar">

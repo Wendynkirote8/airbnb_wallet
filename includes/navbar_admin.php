@@ -1,4 +1,6 @@
-<ul>
+<!-- Navigation Sidebar -->
+<div class="navigation">
+      <ul>
         <li>
           <a href="#">
             <span class="icon">
@@ -8,19 +10,11 @@
           </a>
         </li>
         <li>
-          <a onclick="window.location.href='admin_dashboard.php';" style="cursor: pointer;" class="active-link">
+          <a onclick="window.location.href='admin_dashboard.php';" style="cursor: pointer;">
             <span class="icon">
               <ion-icon name="grid-outline"></ion-icon>
             </span>
             <span class="title">Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="create_admin.php">
-            <span class="icon">
-              <ion-icon name="person-add-outline"></ion-icon>
-            </span>
-            <span class="title">Create Admin</span>
           </a>
         </li>
         <li>
@@ -56,7 +50,15 @@
           </a>
         </li>
         <li>
-          <a onclick="window.location.href='../admin/logout_admin.php';" style="cursor: pointer;">
+          <a href="admin_transactions.php">
+            <span class="icon">
+              <ion-icon name="receipt-outline"></ion-icon>
+            </span>
+            <span class="title">Transactions</span>
+          </a>
+        </li>
+        <li>
+          <a onclick="window.location.href='../public/logout_admin.php';" style="cursor: pointer;">
             <span class="icon">
               <ion-icon name="log-out-outline"></ion-icon>
             </span>
@@ -64,3 +66,4 @@
           </a>
         </li>
       </ul>
+    </div>

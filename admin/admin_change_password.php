@@ -25,9 +25,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Invalid CSRF token.";
     } else {
         // Retrieve and validate form inputs.
-        $user_id         = $_POST["user_id"] ?? '';
-        $new_password    = $_POST["new_password"] ?? '';
-        $confirm_password= $_POST["confirm_password"] ?? '';
+        $user_id          = $_POST["user_id"] ?? '';
+        $new_password     = $_POST["new_password"] ?? '';
+        $confirm_password = $_POST["confirm_password"] ?? '';
         
         if (empty($user_id)) {
             $error = "No user selected.";
@@ -64,178 +64,71 @@ try {
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard - Change User Password</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Optionally include a chart library like Chart.js for the Transaction Trends -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      background-color: #f8f9fa;
-      overflow-x: hidden;
-    }
-    /* Sidebar styling */
-    #sidebar-wrapper {
-      width: 250px;
-      min-height: 100vh;
-      background-color: #fff;
-      border-right: 1px solid #dee2e6;
-    }
-    .sidebar-heading {
-      font-size: 1.2rem;
-      font-weight: bold;
-      padding: 1rem;
-      background-color: #e9ecef;
-      margin-bottom: 0;
-    }
-    .list-group-item {
-      border: none;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .list-group-item:hover {
-      background-color: #f0f0f0;
-      cursor: pointer;
-    }
-    /* Page content wrapper */
-    #page-content-wrapper {
-      flex: 1;
-      width: 100%;
-    }
-    /* Top navbar styling */
-    .top-navbar {
-      background-color: #fff;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .top-navbar .navbar-brand {
-      font-weight: 600;
-    }
-    /* Card styling for stats boxes */
-    .stats-card {
-      background-color: #fff;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 1rem;
-      text-align: center;
-    }
-    .stats-card h5 {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: bold;
-    }
-    .stats-card p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/admin_style.css">
+  <!-- Ionicons for icons -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
-
-<div class="d-flex">
-<?php include '../includes/navbar.php'; ?>
-  </div>
-
-  <!-- Page Content -->
-  <div id="page-content-wrapper">
-    <!-- Top Navbar -->
-    <nav class="navbar top-navbar">
-      <div class="container-fluid">
-        
-        <div>
-          <!-- You can place a user avatar or logout button here -->
-          <span class="me-3">Back</span>
+  <div class="container">
+    <!-- Navigation Sidebar -->
+    <div class="navigation">
+      <?php include '../includes/navbar_admin.php'; ?>
+    </div>
+    <!-- Main Content Area -->
+    <div class="main">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="toggle"><ion-icon name="menu-outline"></ion-icon></div>
+        <div class="search">
+          <input type="text" placeholder="Search here">
+        </div>
+        <div class="user">
+          <img src="../assets/imgs/default-profile.png" alt="Admin Profile">
         </div>
       </div>
-    </nav>
-
-    <div class="container-fluid py-3">
-      <!-- Stats Row -->
-      
-
-      <!-- Transaction Trends Section -->
-      <div class="row mt-4">
-        
-        </div>
-      </div>
-
-      <!-- Change User Password Form -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Change User Password</h5>
-              <?php if (!empty($error)): ?>
-                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-              <?php endif; ?>
-              <?php if (!empty($success)): ?>
-                <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
-              <?php endif; ?>
-
-              <div class="mb-3">
-                <label for="userSelect" class="form-label">Select User</label>
-                <select id="userSelect" class="form-select" onchange="populateUserId(this)">
-                  <option value="">-- Select User --</option>
-                  <?php foreach ($users as $user): ?>
-                    <option value="<?php echo $user['user_id']; ?>">
-                      <?php echo htmlspecialchars($user['full_name']) . ' (' . htmlspecialchars($user['email']) . ')'; ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              
-              <form method="POST" action="admin_change_password.php">
-                <input type="hidden" name="user_id" id="user_id">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                <div class="mb-3">
-                  <label for="new_password" class="form-label">New Password</label>
-                  <input type="password" name="new_password" class="form-control" id="new_password" required minlength="8">
-                </div>
-                <div class="mb-3">
-                  <label for="confirm_password" class="form-label">Confirm New Password</label>
-                  <input type="password" name="confirm_password" class="form-control" id="confirm_password" required minlength="8">
-                </div>
-                <button type="submit" class="btn btn-primary">Change Password</button>
-              </form>
-            </div>
+      <!-- Content -->
+      <div class="content">
+        <h2>Change User Password</h2>
+        <?php if (!empty($error)): ?>
+          <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        <?php if (!empty($success)): ?>
+          <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+        <div class="form-container">
+          <div class="form-group">
+            <label for="userSelect">Select User</label>
+            <select id="userSelect" onchange="populateUserId(this)">
+              <option value="">-- Select User --</option>
+              <?php foreach ($users as $user): ?>
+                <option value="<?php echo $user['user_id']; ?>">
+                  <?php echo htmlspecialchars($user['full_name']) . ' (' . htmlspecialchars($user['email']) . ')'; ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
           </div>
+          <form method="POST" action="admin_change_password.php">
+            <input type="hidden" name="user_id" id="user_id">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+            <div class="form-group">
+              <label for="new_password">New Password</label>
+              <input type="password" name="new_password" id="new_password" required minlength="8">
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Confirm New Password</label>
+              <input type="password" name="confirm_password" id="confirm_password" required minlength="8">
+            </div>
+            <button type="submit" class="custom-btn">Change Password</button>
+          </form>
         </div>
       </div>
-
-    </div> <!-- container-fluid -->
-  </div> <!-- page-content-wrapper -->
-</div> <!-- d-flex -->
-
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-  function populateUserId(selectElement) {
-    document.getElementById('user_id').value = selectElement.value;
-  }
-
-  // Example Chart.js script to display a simple line chart for Transaction Trends
-  const ctx = document.getElementById('transactionChart').getContext('2d');
-  const transactionChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-      datasets: [{
-        label: 'Deposits/Withdrawals',
-        data: [5, 10, 7, 12, 8],
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-        fill: false
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
+    </div>
+  </div>
+  <script>
+    function populateUserId(selectElement) {
+      document.getElementById('user_id').value = selectElement.value;
     }
-  });
-</script>
-
+  </script>
 </body>
 </html>
