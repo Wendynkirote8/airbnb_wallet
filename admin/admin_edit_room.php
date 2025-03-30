@@ -27,6 +27,7 @@ $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$room) {
     echo "Room not found.";
+    header("Location: admin_manage_rooms.php");
     exit();
 }
 

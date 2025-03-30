@@ -20,7 +20,42 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <title>Manage Rooms - Admin Dashboard</title>
   <!-- Internal CSS for Wesh AirBNB Pay theme -->
   <style>
-    
+    /* Container for aligning action buttons side by side */
+    .action-buttons {
+      display: inline-flex;
+      gap: 8px;           /* Adjust spacing between buttons as needed */
+      align-items: center;
+      white-space: nowrap; /* Prevent wrapping if space is limited */
+    }
+
+    /* Base styling for action buttons (if not already defined) */
+    .action-btn {
+      display: inline-block;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Edit button styling */
+    .action-btn.edit {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    .action-btn.edit:hover {
+      background-color: #45a049;
+    }
+
+    /* Delete button styling */
+    .action-btn.delete {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .action-btn.delete:hover {
+      background-color: #e53935;
+    }
+   
   </style>
    <link rel="stylesheet" href="../assets/css/admin_style.css">
   <!-- Ionicons (for icons) -->
@@ -69,8 +104,10 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($room['price']); ?></td>
                 <td><?php echo htmlspecialchars($room['capacity']); ?></td>
                 <td>
-                  <a href="admin_edit_room.php?id=<?php echo $room['id']; ?>" class="action-btn edit">Edit</a>
-                  <a href="admin_delete_room.php?id=<?php echo $room['id']; ?>" class="action-btn delete" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
+                  <div class="action-buttons">
+                    <a href="admin_edit_room.php?id=<?php echo $room['id']; ?>" class="action-btn edit">Edit</a>
+                    <a href="admin_delete_room.php?id=<?php echo $room['id']; ?>" class="action-btn delete" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
+                  </div>
                 </td>
               </tr>
               <?php endforeach; ?>

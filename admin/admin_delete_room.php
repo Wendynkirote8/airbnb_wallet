@@ -28,6 +28,7 @@ $room = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$room) {
     // If the room doesn't exist, you can show an error or redirect.
     echo "Room not found.";
+    header("Location: admin_manage_rooms.php");
     exit();
 }
 

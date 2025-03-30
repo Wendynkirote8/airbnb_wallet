@@ -56,12 +56,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["redeem_points"])) {
             $stmt->execute([$newPoints, $user_id]);
 
             // 3. Insert transaction record for the redemption.
-            // Here, the 'amount' field stores the redeemed money (Ksh) equivalent.
-            $stmt = $pdo->prepare("INSERT INTO transactions (wallet_id, amount, transaction_type, status, created_at) VALUES (?, ?, 'redeem', 'completed', NOW())");
-            $stmt->execute([$wallet_id, $redeemAmount]);
+            $transaction_id = uniqid('tx_');
+            $stmt = $pdo->prepare("INSERT INTO transactions (transaction_id, wallet_id, amount, transaction_type, status, created_at) VALUES (?, ?, ?, 'redeem', 'completed', NOW())");
+            $stmt->execute([$transaction_id, $wallet_id, $redeemAmount]);
 
             $pdo->commit();
-            $successMessage = "Redeem successful! You redeemed $pointsToRedeem points (Ksh " . number_format($redeemAmount, 2) . ").";
+
+            // Re-fetch the updated wallet balance
+            $stmt = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            $walletBalanceData = $stmt->fetch(PDO::FETCH_ASSOC);
+            $currentBalance = $walletBalanceData ? $walletBalanceData["balance"] : 0;
+
+            $successMessage = "Redeem successful! You redeemed $pointsToRedeem points (Ksh " . number_format($redeemAmount, 2) . "). Your current wallet balance is Ksh " . number_format($currentBalance, 2) . ".";
         } catch (PDOException $e) {
             $pdo->rollBack();
             $errorMessage = "Error: " . $e->getMessage();
@@ -161,6 +168,35 @@ try {
       background-color: #f8d7da;
       color: #721c24;
     }
+    /* Styling for input field and button in redeem form */
+    .form-card input[type="number"] {
+      width: 150px;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .form-card button {
+      width: 150px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #2a2185;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .form-card button:hover {
+      background-color: #1c193f;
+      transform: scale(1.03);
+    }
+    .form-card button:active {
+      transform: scale(0.98);
+    }
+    .form-card button:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(42,33,133,0.4);
+    }
   </style>
 </head>
 <body>
@@ -192,9 +228,9 @@ try {
       <div class="welcome-card">
         <h1>Redeem Your Loyalty Points</h1>
         <p>
-          You have <span class="points_redeem"><?php echo number_format($userPoints); ?></span> points.
+          You have <?php echo number_format($userPoints); ?> points.
           <br>
-          Equivalent Value: <span class="money_redeem">Ksh <?php echo number_format($equivalent_money, 2); ?></span>
+          Equivalent Value: Ksh <?php echo number_format($equivalent_money, 2); ?>
         </p>
       </div>
 
@@ -217,7 +253,7 @@ try {
             type="number" 
             name="redeem_points" 
             id="redeem_points" 
-            placeholder="Enter Points to Redeem" 
+            placeholder="Enter Points" 
             min="10" 
             max="<?php echo $userPoints; ?>" 
             required
@@ -269,7 +305,6 @@ try {
 
     </section>
 
-    <!-- Optional footer or additional navigation -->
     <?php include '../includes/navbarroot.php'; ?>
   </div>
 

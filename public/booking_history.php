@@ -23,7 +23,7 @@ $profile_picture = $user && !empty($user["profile_picture"])
     ? "../uploads/" . $user["profile_picture"] 
     : "../assets/imgs/default-user.png";
 
-// Fetch booking history including all statuses (booked, cancelled, etc.)
+// Fetch booking history including all statuses (booked, canceled, etc.)
 try {
     $stmt = $pdo->prepare("
         SELECT b.id AS booking_id, r.name AS room_name, b.days, b.total_cost, b.booking_date, b.status 
@@ -87,6 +87,11 @@ try {
       background: #2a2185;
       color: #fff;
     }
+    /* Status styling: if the booking is canceled, show in red */
+    .status-canceled {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -145,7 +150,17 @@ try {
                     <td><?php echo htmlspecialchars($booking['days']); ?></td>
                     <td><?php echo htmlspecialchars(number_format($booking['total_cost'], 2)); ?></td>
                     <td><?php echo htmlspecialchars($booking['booking_date']); ?></td>
-                    <td><?php echo htmlspecialchars(ucfirst($booking['status'])); ?></td>
+                    <td>
+                      <?php 
+                        // If status is canceled, apply the "status-canceled" class
+                        $status = htmlspecialchars(ucfirst($booking['status']));
+                        if (strtolower($booking['status']) === 'canceled') {
+                          echo "<span class='status-canceled'>$status</span>";
+                        } else {
+                          echo $status;
+                        }
+                      ?>
+                    </td>
                   </tr>
                 <?php endforeach; ?>
               <?php else: ?>

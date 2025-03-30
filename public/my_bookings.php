@@ -1,11 +1,4 @@
 <?php
-// my_bookings_grid.php
-
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 require_once '../config/db_connect.php';
 
@@ -35,9 +28,8 @@ try {
     WHERE b.user_id = ? 
     ORDER BY b.booking_date DESC
 ");
-$stmt->execute([$user_id]);
-$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $stmt->execute([$user_id]);
+    $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Error fetching bookings: " . $e->getMessage());
 }
@@ -113,19 +105,68 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
       color: #2a2185;
       margin-top: 10px;
     }
-    .booking-details a {
-      display: inline-block;
+    /* Container for action links (View Details and Cancel Booking) */
+    .action-links {
+      display: flex;
+      gap: 10px;
       margin-top: 15px;
+    }
+    .action-links a {
+      flex: 1;
+      text-align: center;
       padding: 8px 12px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    /* View Details button style */
+    .action-links .view-btn {
       background: #2a2185;
       color: #fff;
-      border-radius: 6px;
-      transition: background 0.3s;
-      text-align: center;
-      font-size: 0.9rem;
     }
-    .booking-details a:hover {
+    .action-links .view-btn:hover {
       background: #1c193f;
+    }
+    /* Cancel button style in red */
+    .action-links .cancel-btn {
+      background: #e74c3c;
+      color: #fff;
+    }
+    .action-links .cancel-btn:hover {
+      background: #c0392b;
+    }
+    /* Feedback Message styling */
+    .message {
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    /* Status styles */
+    .status-booked {
+      color: green;
+      font-weight: bold;
+    }
+    .status-canceled {
+      color: red;
+      font-weight: bold;
+    }
+    .status-pending {
+      color: orange;
+      font-weight: bold;
     }
   </style>
   <!-- Ionicons for icons if needed -->
@@ -159,23 +200,39 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <section class="overview">
       <div class="bookings-grid-section">
         <h2>My Booked Rooms</h2>
+        <!-- Display cancellation/refund message if set -->
+        <?php
+        if (isset($_SESSION['cancel_message'])) {
+            echo '<div class="message success">' . htmlspecialchars($_SESSION['cancel_message']) . '</div>';
+            unset($_SESSION['cancel_message']);
+        }
+        ?>
         <?php if (!empty($bookings)): ?>
           <div class="bookings-grid">
             <?php foreach ($bookings as $booking): ?>
               <div class="booking-card">
                 <?php if (!empty($booking['room_image'])): ?>
                   <div class="booking-image">
-                  <img src="../<?php echo htmlspecialchars($booking['room_image']); ?>" alt="Room Image">
-
+                    <img src="../<?php echo htmlspecialchars($booking['room_image']); ?>" alt="Room Image">
                   </div>
                 <?php endif; ?>
                 <div class="booking-details">
                   <h3><?php echo htmlspecialchars($booking['room_name']); ?></h3>
                   <p><strong>Days:</strong> <?php echo htmlspecialchars($booking['days']); ?></p>
-                  <p><strong>Total:</strong> ksh. <?php echo number_format($booking['total_cost'], 2); ?></p>
+                  <p><strong>Total:</strong> Ksh. <?php echo number_format($booking['total_cost'], 2); ?></p>
                   <p><strong>Date:</strong> <?php echo htmlspecialchars($booking['booking_date']); ?></p>
-                  <p><strong>Status:</strong> <?php echo htmlspecialchars(ucfirst($booking['status'])); ?></p>
-                  <a href="booking_details.php?id=<?php echo $booking['booking_id']; ?>">View Details</a>
+                  <p>
+                    <strong>Status:</strong>
+                    <span class="<?php echo (strtolower($booking['status']) === 'booked') ? 'status-booked' : ((strtolower($booking['status']) === 'canceled') ? 'status-canceled' : 'status-pending'); ?>">
+                      <?php echo htmlspecialchars(ucfirst($booking['status'])); ?>
+                    </span>
+                  </p>
+                  <div class="action-links">
+                    <a class="view-btn" href="booking_details.php?id=<?php echo $booking['booking_id']; ?>">View Details</a>
+                    <?php if (strtolower($booking['status']) === 'pending'): ?>
+                      <a class="cancel-btn" href="cancel_booking.php?id=<?php echo $booking['booking_id']; ?>" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel Booking</a>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </div>
             <?php endforeach; ?>

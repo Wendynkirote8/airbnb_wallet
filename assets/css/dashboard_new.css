@@ -237,36 +237,8 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
   }
-  .deposit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .deposit-form label {
-    font-weight: 500;
-    color: #444;
-  }
-  .deposit-form input[type="number"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .button-row {
-    display: flex;
-    gap: 10px;
-  }
-  .button-row button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    background: #2c3e50;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .button-row button:hover {
-    background: #3e4f61;
-  }
+   
+    
   
   /* Table Card */
 .table-card {
@@ -431,30 +403,6 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-  .deposit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .deposit-form label {
-    font-weight: 500;
-  }
-  .deposit-form input[type="number"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .deposit-form button {
-    padding: 10px 16px;
-    background: #2c3e50;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .deposit-form button:hover {
-    background: #3e4f61;
-  }
+  
   
   

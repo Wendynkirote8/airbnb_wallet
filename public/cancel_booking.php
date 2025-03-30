@@ -24,14 +24,24 @@ if (!$booking) {
 }
 
 $total_cost = $booking['total_cost'];
+$room_id = $booking['room_id'];    // Assuming you have room_id in bookings
+$days = $booking['days'];
+$booking_date = $booking['booking_date'];
 
 try {
     // Begin transaction
     $pdo->beginTransaction();
 
-    // Delete the booking record so it no longer appears in your list
-    $stmt = $pdo->prepare("DELETE FROM bookings WHERE id = ? AND user_id = ?");
+    // Instead of deleting the booking record, update its status to 'canceled'
+    $stmt = $pdo->prepare("UPDATE bookings SET status = 'canceled' WHERE id = ? AND user_id = ?");
     $stmt->execute([$booking_id, $user_id]);
+
+    // Insert a log record into booking_logs to capture this cancellation action
+    $stmt = $pdo->prepare("
+        INSERT INTO booking_logs (booking_id, user_id, room_id, days, total_cost, booking_date, action, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'canceled', 'canceled')
+    ");
+    $stmt->execute([$booking_id, $user_id, $room_id, $days, $total_cost, $booking_date]);
 
     // Retrieve the current wallet balance
     $stmt = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
@@ -53,7 +63,7 @@ try {
     $_SESSION['cancel_message'] = "Booking cancelled. Refund of ksh. " . number_format($total_cost, 2) . " has been credited to your wallet.";
 
     // Redirect back to the room details or dashboard page
-    header("Location: room_details.php");
+    header("Location: my_bookings.php");
     exit();
 } catch (Exception $e) {
     // Rollback transaction if any error occurs

@@ -2,8 +2,8 @@
 session_start();
 require_once '../config/db_connect.php'; // Ensure $pdo is set up
 
-// Fetch all available rooms
-$stmt = $pdo->query("SELECT id, name, description, price, capacity, image FROM rooms ORDER BY created_at DESC");
+// Fetch all available rooms including rating, favourite and created_at details
+$stmt = $pdo->query("SELECT id, name, description, price, capacity, image, created_at, rating, favourite FROM rooms ORDER BY created_at DESC");
 $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Ensure user is authenticated and fetch user details
@@ -56,13 +56,18 @@ $profile_picture = $user && !empty($user["profile_picture"])
       position: absolute;
       top: 10px;
       right: 10px;
-      color: #999;
       font-size: 1.4rem;
       cursor: pointer;
       transition: color 0.3s;
     }
+    .heart-icon.favourite {
+      color: #e74c3c; /* red for favourite rooms */
+    }
+    .heart-icon:not(.favourite) {
+      color: #999;
+    }
     .heart-icon:hover {
-      color: #e74c3c; /* red on hover */
+      color: #e74c3c;
     }
     .room-card img {
       width: 100%;
@@ -177,8 +182,12 @@ $profile_picture = $user && !empty($user["profile_picture"])
           <div class="rooms-grid">
             <?php foreach ($rooms as $room): ?>
               <div class="room-card">
-                <!-- Heart Icon (favorite) -->
-                <ion-icon name="heart-outline" class="heart-icon"></ion-icon>
+                <!-- Heart Icon: filled if favourite is true -->
+                <?php if ($room['favourite'] == 1): ?>
+                  <ion-icon name="heart" class="heart-icon favourite"></ion-icon>
+                <?php else: ?>
+                  <ion-icon name="heart-outline" class="heart-icon"></ion-icon>
+                <?php endif; ?>
 
                 <!-- Room Image -->
                 <?php if (!empty($room['image'])): ?>
@@ -192,19 +201,18 @@ $profile_picture = $user && !empty($user["profile_picture"])
                   <div>
                     <!-- Top Row: Badge or location -->
                     <div class="top-row">
-                      <!-- Example "Guest favorite" badge (conditional) -->
                       <span class="badge">Guest favorite</span>
-                      <!-- Or you could display location if you have that in DB -->
+                      <!-- You can include additional details here if needed -->
                     </div>
 
                     <!-- Room Name -->
                     <h3><?php echo htmlspecialchars($room['name']); ?></h3>
 
-                    <!-- Host & Rating (placeholders for now) -->
+                    <!-- Host & Rating -->
                     <div class="hosted">Hosted by Nicole</div>
                     <div class="rating">
                       <ion-icon name="star"></ion-icon>
-                      4.88
+                      <?php echo htmlspecialchars($room['rating']); ?>
                     </div>
 
                     <!-- Price Info (with /night) -->

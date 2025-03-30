@@ -47,9 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
             // 2. Log Transaction
-            $stmt = $pdo->prepare("INSERT INTO transactions (wallet_id, amount, transaction_type, status, created_at) 
-                                   VALUES (?, ?, 'deposit', 'completed', NOW())");
-            $stmt->execute([$wallet_id, $amount]);
+            $transaction_id = uniqid('tx_'); // Generate a unique transaction ID
+
+            $stmt = $pdo->prepare("INSERT INTO transactions (transaction_id, wallet_id, amount, transaction_type, status, created_at) 
+                                  VALUES (?, ?, ?, 'deposit', 'completed', NOW())");
+            $stmt->execute([$transaction_id, $wallet_id, $amount]);
 
             // 3. Calculate Loyalty Points (5 points per Ksh 100)
             $points = floor($amount / 100) * 5;
@@ -110,7 +112,7 @@ try {
   <!-- ======= Unified Styles (Same as your new dashboard) ======= -->
   <link rel="stylesheet" href="../assets/css/dashboard_new.css">
 
-  <!-- Additional styles for messages (if not in your CSS) -->
+  <!-- Additional styles for messages and deposit button -->
   <style>
     .message-container {
       padding: 15px;
@@ -119,7 +121,7 @@ try {
       text-align: center;
     }
     .success-message {
-      background-color: #d4edda;
+      background-color: #d4edda;  
       color: #155724;
     }
     .error-message {
@@ -150,6 +152,52 @@ try {
     .table-responsive th {
       background-color: #f2f2f2;
       color: #333;
+    }
+    /* Improved Deposit Button Styles */
+    .form-card button {
+      background-color: #2a2185;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .form-card button:hover {
+      background-color: #1c193f;
+      transform: scale(1.03);
+    }
+    .form-card button:active {
+      transform: scale(0.98);
+    }
+    .form-card button:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(42,33,133,0.4);
+    }
+    /* Additional styling for the deposit form card */
+    .form-card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      margin: 0 auto 30px;
+    }
+    .form-card label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    .form-card input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
     }
   </style>
 

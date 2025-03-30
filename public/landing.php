@@ -1,5 +1,14 @@
 <?php
 session_start();
+require_once '../config/db_connect.php';
+
+// Fetch rooms from the database.
+$sql = "SELECT * FROM rooms ORDER BY created_at DESC";
+$stmt = $pdo->query($sql);
+$rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Set base URL for room images (adjust based on your directory structure)
+$baseImageUrl = '/airbnb_wallet/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,32 +19,21 @@ session_start();
   <meta name="description" content="Manage your vacation finances easily and securely with the new weshPAY E-Wallet for Airbnb.">
   
   <!-- Google Font: Poppins -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   
   <!-- Font Awesome for icons -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <!-- Leaflet CSS for map integration -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 
   <!-- Flatpickr CSS for the date pickers -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 
   <!-- External CSS (Adjust path as needed) -->
   <link rel="stylesheet" href="../assets/css/landing.css">
-
+  
+  <!-- (Include any additional CSS here) -->
   <style>
     /* -------------------------------- */
     /*          GLOBAL & RESETS         */
@@ -532,56 +530,49 @@ session_start();
 
   <!-- TOP NAV BAR -->
   <header class="top-header">
-    <!-- Left side: Logo + "Homes" / "Experiences" -->
     <div class="left-nav">
       <div class="logo">weshPAY</div>
       <ul class="nav-links">
         <li><a href="landing.php">Homes</a></li>
-        <li><a href="#">Experiences</a></li>
+        <li><a href="room_details.php?id">Experiences</a></li>
       </ul>
     </div>
-
-    <!-- Centered Search Bar (Single Range Input) -->
     <div class="center-search">
       <input type="text" id="searchLocation" placeholder="Where (Map area)" />
       <input type="text" id="searchDateRange" placeholder="Add dates" />
       <input type="text" id="searchGuests" placeholder="Add guests" />
       <button id="searchBtn"><i class="fas fa-search"></i></button>
     </div>
-
-    <!-- Right side: "Pay for your room", globe, user icon, etc. -->
     <div class="right-nav">
       <a href="login.php">Pay for your room</a>
       <i class="fas fa-globe" id="regionIcon"></i>
-      
-      <!-- Profile container with dropdown -->
       <div class="profile-container">
         <i class="fas fa-user-circle fa-lg" id="profileIcon"></i>
         <div class="profile-dropdown" id="profileDropdown">
           <a href="register.php">Sign up</a>
           <a href="login.php">Log in</a>
           <hr />
-          <a href="#">Gift cards</a>
-          <a href="#">Airbnb your home</a>
-          <a href="#">Host an experience</a>
-          <a href="#">Help Center</a>
+          <a href="room_details.php?id">Gift cards</a>
+          <a href="room_details.php?id">Airbnb your home</a>
+          <a href="room_details.php?id">Host an experience</a>
+          <a href="room_details.php?id">Help Center</a>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- CATEGORY BAR (TABS) -->
+  <!-- CATEGORY BAR -->
   <div class="category-bar">
-    <button>Bed & Breakfasts</button>
-    <button>Tiny Homes</button>
-    <button>Countryside</button>
-    <button>Beach</button>
-    <button>Beachfront</button>
-    <button>Luxe</button>
-    <button>Amazing views</button>
-    <!-- etc... -->
-    <button class="filters-btn">Filters</button>
-  </div>
+  <button onclick="window.location.href='coming-soon.php';">Bed & Breakfasts</button>
+  <button onclick="window.location.href='coming-soon.php';">Tiny Homes</button>
+  <button onclick="window.location.href='coming-soon.php';">Countryside</button>
+  <button onclick="window.location.href='coming-soon.php';">Beach</button>
+  <button onclick="window.location.href='coming-soon.php';">Beachfront</button>
+  <button onclick="window.location.href='coming-soon.php';">Luxe</button>
+  <button onclick="window.location.href='coming-soon.php';">Amazing views</button>
+  <button class="filters-btn">Filters</button>
+</div>
+
 
   <!-- Region / Language Modal -->
   <div class="region-modal" id="regionModal">
@@ -591,13 +582,10 @@ session_start();
         <span class="region-modal-close" id="regionClose">&times;</span>
       </div>
       <div class="region-modal-body">
-        <!-- Tabs -->
         <div class="region-tabs">
           <button class="region-tab active" data-target="langTab">Language and region</button>
           <button class="region-tab" data-target="currencyTab">Currency</button>
         </div>
-
-        <!-- Tab Content: Language & Region -->
         <div class="region-tab-content" id="langTab">
           <div class="translation-toggle">
             <label class="toggle-label" for="translationToggle">
@@ -607,7 +595,6 @@ session_start();
             </label>
             <p>Automatically translate descriptions and reviews to English.</p>
           </div>
-
           <h3>Choose a language and region</h3>
           <ul class="language-list">
             <li>English (United States)</li>
@@ -616,11 +603,8 @@ session_start();
             <li>Deutsch</li>
             <li>Español</li>
             <li>Français</li>
-            <!-- Add as many as you like... -->
           </ul>
         </div>
-
-        <!-- Tab Content: Currency -->
         <div class="region-tab-content" id="currencyTab" style="display: none;">
           <h3>Select your currency</h3>
           <ul class="currency-list">
@@ -629,7 +613,6 @@ session_start();
             <li>KSH – Kenyan Shilling</li>
             <li>GBP – British Pound</li>
             <li>AUD – Australian Dollar</li>
-            <!-- etc... -->
           </ul>
         </div>
       </div>
@@ -639,15 +622,32 @@ session_start();
   <!-- LISTINGS SECTION -->
   <section class="listings" id="listings">
     <h2 class="section-title">Explore Stays</h2>
-
-    <!-- Map -->
+    <!-- Map Container -->
     <div class="map-container" id="map"></div>
-
-    <!-- Dynamic Listings Grid -->
+    <!-- Listings Grid -->
     <div class="listings-grid" id="listingsGrid">
-      <!-- Listing cards injected by JavaScript -->
-    </div>
+      <?php if (!empty($rooms)): ?>
+        <?php foreach ($rooms as $room): ?>
+          <div class="listing-card">
+          <?php
+            $imgSrc = !empty($room['image'])
+                // If it doesn't already start with '/', prepend it:
+                ? (strpos($room['image'], '/') === 0 ? $room['image'] : '/' . $room['image'])
+                : 'https://via.placeholder.com/800x600?text=No+Image';
+            ?>
+            <img src="<?php echo $imgSrc; ?>" alt="<?php echo htmlspecialchars($room['name']); ?>" />
 
+            <div class="listing-details">
+              <div class="listing-title"><?php echo htmlspecialchars($room['name']); ?></div>
+              <div class="listing-price">Ksh <?php echo number_format($room['price'], 2); ?>/night</div>
+              <a href="room_details.php?id=<?php echo $room['id']; ?>">View Details</a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p>No rooms available at the moment.</p>
+      <?php endif; ?>
+    </div>
     <!-- Load More Button -->
     <div class="load-more-container">
       <button class="btn" id="loadMoreBtn">Load More</button>
@@ -661,13 +661,176 @@ session_start();
 
   <!-- Leaflet JS for map integration -->
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-
   <!-- Flatpickr JS for the date pickers -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="../assets/js/landing.js"></script>
+  <!-- Uncomment or include your external JS file if needed -->
+  <!-- <script src="../assets/js/landing.js"></script> -->
 
   <script>
-    
+    // Define baseImageUrl as a JavaScript variable from PHP
+    const baseImageUrl = '<?php echo $baseImageUrl; ?>';
+
+    // Pass dynamic room data from PHP to JavaScript
+    const listingsData = <?php echo json_encode($rooms); ?>;
+
+    // Pagination variables
+    let currentPage = 1;
+    const listingsPerPage = 3;
+
+    // Leaflet map & marker group
+    let map, markerGroup;
+
+    window.addEventListener('load', () => {
+      initMap();
+      renderListings(listingsData);
+
+      flatpickr("#searchDateRange", {
+        mode: "range",
+        showMonths: 2,
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "F j, Y",
+        prevArrow: "<i class='fas fa-chevron-left'></i>",
+        nextArrow: "<i class='fas fa-chevron-right'></i>"
+      });
+    });
+
+    // Initialize Leaflet map
+    function initMap() {
+      map = L.map('map').setView([-1.286389, 36.817223], 7);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+      markerGroup = L.layerGroup().addTo(map);
+    }
+
+    // Render listings with pagination
+    function renderListings(fullList) {
+      const container = document.getElementById('listingsGrid');
+      container.innerHTML = '';
+      markerGroup.clearLayers();
+
+      const paginatedList = fullList.slice(0, currentPage * listingsPerPage);
+
+      paginatedList.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('listing-card');
+
+        card.innerHTML = `
+          <img src="${item.image ? baseImageUrl + item.image : 'https://via.placeholder.com/800x600?text=No+Image'}" alt="${item.name}">
+          <div class="listing-details">
+            ${ item.favourite ? '<div class="listing-favorite">Guest favorite</div>' : '' }
+            <div class="listing-title">${item.name}</div>
+            <div class="listing-rating">
+              <i class="fas fa-star"></i>
+              <span>${item.rating || 'N/A'}</span>
+            </div>
+            <div class="listing-price">KSh ${parseFloat(item.price).toLocaleString()} / night</div>
+            <a href="room_details.php?id=${item.id}">View Details</a>
+          </div>
+          <div class="wishlist-icon ${item.wishlist ? 'active' : ''}" onclick="toggleWishlist(${item.id})">
+            <i class="fas fa-heart"></i>
+          </div>
+        `;
+        container.appendChild(card);
+
+        if(item.lat && item.lng) {
+          const marker = L.marker([item.lat, item.lng]).addTo(markerGroup);
+          marker.bindPopup(`<strong>${item.name}</strong><br/>KSh ${item.price}/night`);
+        }
+      });
+
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      if (currentPage * listingsPerPage >= fullList.length) {
+        loadMoreBtn.style.display = 'none';
+      } else {
+        loadMoreBtn.style.display = 'inline-block';
+      }
+    }
+
+    function toggleWishlist(id) {
+      const listing = listingsData.find(l => l.id === id);
+      if (listing) {
+        listing.wishlist = !listing.wishlist;
+      }
+      applySearchFilter();
+    }
+
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      currentPage++;
+      applySearchFilter();
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      currentPage = 1;
+      applySearchFilter();
+    });
+
+    function applySearchFilter() {
+      const locationVal = document.getElementById('searchLocation').value.toLowerCase().trim();
+      let filtered = [...listingsData];
+
+      if (locationVal) {
+        filtered = filtered.filter(item => item.name.toLowerCase().includes(locationVal));
+      }
+
+      renderListings(filtered);
+    }
+
+    // Profile dropdown functionality
+    const profileIcon = document.getElementById('profileIcon');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    document.addEventListener('click', (e) => {
+      if (profileIcon.contains(e.target)) {
+        profileDropdown.classList.toggle('show');
+      } else {
+        if (!profileDropdown.contains(e.target)) {
+          profileDropdown.classList.remove('show');
+        }
+      }
+    });
+
+    // Region modal functionality
+    const regionIcon = document.getElementById('regionIcon');
+    const regionModal = document.getElementById('regionModal');
+    const regionClose = document.getElementById('regionClose');
+    const regionTabs = document.querySelectorAll('.region-tab');
+    const langTabContent = document.getElementById('langTab');
+    const currencyTabContent = document.getElementById('currencyTab');
+
+    regionIcon.addEventListener('click', () => {
+      regionModal.classList.add('show');
+    });
+
+    regionClose.addEventListener('click', () => {
+      regionModal.classList.remove('show');
+    });
+
+    regionModal.addEventListener('click', (e) => {
+      if (e.target === regionModal) {
+        regionModal.classList.remove('show');
+      }
+    });
+
+    regionTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        regionTabs.forEach((t) => t.classList.remove('active'));
+        langTabContent.style.display = 'none';
+        currencyTabContent.style.display = 'none';
+
+        tab.classList.add('active');
+        const targetId = tab.getAttribute('data-target');
+        if (targetId === 'langTab') {
+          langTabContent.style.display = 'block';
+        } else {
+          currencyTabContent.style.display = 'block';
+        }
+      });
+    });
   </script>
+
 </body>
 </html>

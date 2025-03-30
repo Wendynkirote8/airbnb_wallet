@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once '../config/db_connect.php'; // Ensure $pdo is set up
+require_once '../config/db_connect.php';
 
 // Ensure user is authenticated
 if (!isset($_SESSION["user_id"])) {
@@ -40,84 +40,131 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['days'])) {
     // Retrieve the number of days from form input
     $days = (int) $_POST['days'];
 
-    // Define discount rate (10% discount)
-    $discount_rate = 0.10;
-    $apply_discount = false;
-
-    // Condition 1: Booking is for 4 or more days
-    if ($days >= 4) {
-        $apply_discount = true;
+    // --- New: Check if the user already has a pending booking ---
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE user_id = ? AND status = 'pending'");
+    $stmt->execute([$user_id]);
+    $pendingBookings = $stmt->fetchColumn();
+    if ($pendingBookings > 0) {
+        $feedbackMessage = "You already have a pending booking. Please wait until it is confirmed or canceled before booking a new room.";
     } else {
-        // Condition 2: Check if the user has booked this same room at least twice already
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE user_id = ? AND room_id = ?");
-        $stmt->execute([$user_id, $room_id]);
-        $previousBookings = $stmt->fetchColumn();
-        if ($previousBookings >= 2) {
+        // Define discount rate (10% discount)
+        $discount_rate = 0.10;
+        $apply_discount = false;
+
+        // Condition 1: Booking is for 4 or more days
+        if ($days >= 4) {
             $apply_discount = true;
-        }
-    }
-
-    // Get the room price (price per day)
-    $room_price = $room['price'];
-
-    // Apply discount if eligible
-    if ($apply_discount) {
-        $room_price = $room_price - ($room_price * $discount_rate);
-    }
-
-    // Calculate the total cost
-    $total_cost = $room_price * $days;
-
-    try {
-        // Begin transaction
-        $pdo->beginTransaction();
-
-        // Retrieve the user's wallet balance and wallet id from the wallets table
-        $stmt = $pdo->prepare("SELECT wallet_id, balance FROM wallets WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $walletData = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$walletData) {
-            throw new Exception("Wallet not found for the user.");
-        }
-        $wallet_balance = $walletData['balance'];
-        $wallet_id_db = $walletData['wallet_id'];
-
-        // Check if wallet balance is sufficient
-        if ($wallet_balance < $total_cost) {
-            throw new Exception("Insufficient wallet funds. Your current wallet balance is ksh. " . number_format($wallet_balance, 2));
+        } else {
+            // Condition 2: Check if the user has booked this same room at least twice already
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE user_id = ? AND room_id = ?");
+            $stmt->execute([$user_id, $room_id]);
+            $previousBookings = $stmt->fetchColumn();
+            if ($previousBookings >= 2) {
+                $apply_discount = true;
+            }
         }
 
-        // Deduct the total cost from the wallet balance
-        $new_balance = $wallet_balance - $total_cost;
-        $stmt = $pdo->prepare("UPDATE wallets SET balance = ? WHERE user_id = ?");
-        $stmt->execute([$new_balance, $user_id]);
+        // Get the room price (price per day)
+        $room_price = $room['price'];
 
-        // Insert booking record into the bookings table (status defaulted as 'pending')
-        $stmt = $pdo->prepare("INSERT INTO bookings (user_id, room_id, days, total_cost, booking_date, status) VALUES (?, ?, ?, ?, NOW(), 'pending')");
-        $stmt->execute([$user_id, $room_id, $days, $total_cost]);
-        $booking_id = $pdo->lastInsertId();
+        // Apply discount if eligible (this discount reduces the cost of this booking)
+        if ($apply_discount) {
+            $room_price = $room_price - ($room_price * $discount_rate);
+        }
 
-        // Generate a unique alphanumeric transaction ID
-        $transaction_id = uniqid('tx_');
+        // Calculate the total cost for booking
+        $total_cost = $room_price * $days;
+        // Calculate transaction fee (5% of total cost)
+        $fee = 0.05 * $total_cost;
+        // Total amount to deduct from the wallet: booking cost + fee
+        $totalDeduction = $total_cost + $fee;
 
-        // Insert a row into the transactions table
-        $stmt = $pdo->prepare("INSERT INTO transactions (transaction_id, wallet_id, amount, transaction_type, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-        $stmt->execute([$transaction_id, $wallet_id_db, $total_cost, 'booking', 'completed']);
+        try {
+            // Begin transaction
+            $pdo->beginTransaction();
 
-        // Insert a payment log record into the payment_logs table
-        $provider = "w"; // short code for wallet
-        $reference = "booking_id: " . $booking_id;
-        $payment_status = "completed";
-        $stmt = $pdo->prepare("INSERT INTO payment_logs (user_id, transaction_id, provider, reference, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-        $stmt->execute([$user_id, $transaction_id, $provider, $reference, $payment_status]);
+            // Retrieve the user's wallet balance and wallet id from the wallets table
+            $stmt = $pdo->prepare("SELECT wallet_id, balance FROM wallets WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            $walletData = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$walletData) {
+                throw new Exception("Wallet not found for the user.");
+            }
+            $wallet_balance = $walletData['balance'];
+            $wallet_id_db = $walletData['wallet_id'];
 
-        // Commit transaction
-        $pdo->commit();
+            // Check if wallet balance is sufficient for booking cost plus fee
+            if ($wallet_balance < $totalDeduction) {
+                throw new Exception("Insufficient wallet funds. Your current wallet balance is ksh. " . number_format($wallet_balance, 2) . " but you need ksh. " . number_format($totalDeduction, 2) . " (booking cost plus transaction fee).");
+            }
 
-        $feedbackMessage = "Booking successful! Total cost: ksh. " . number_format($total_cost, 2) . ". Available balance: ksh. " . number_format($new_balance, 2);
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        $feedbackMessage = "Error: " . $e->getMessage();
+            // Deduct the total amount (booking cost + fee) from the wallet balance
+            $new_balance = $wallet_balance - $totalDeduction;
+            $stmt = $pdo->prepare("UPDATE wallets SET balance = ? WHERE user_id = ?");
+            $stmt->execute([$new_balance, $user_id]);
+
+            // Insert booking record into the bookings table (status defaulted as 'pending')
+            $stmt = $pdo->prepare("INSERT INTO bookings (user_id, room_id, days, total_cost, booking_date, status) VALUES (?, ?, ?, ?, NOW(), 'pending')");
+            $stmt->execute([$user_id, $room_id, $days, $total_cost]);
+            $booking_id = $pdo->lastInsertId();
+
+            // Generate a unique alphanumeric transaction ID for booking payment
+            $transaction_id = uniqid('tx_');
+
+            // Insert a transaction record for the booking payment (booking cost only)
+            $stmt = $pdo->prepare("INSERT INTO transactions (transaction_id, wallet_id, amount, transaction_type, status, created_at) VALUES (?, ?, ?, 'booking', 'completed', NOW())");
+            $stmt->execute([$transaction_id, $wallet_id_db, $total_cost]);
+
+            // Instead of inserting the fee into transactions, insert into earning table
+            $earning_id = uniqid('earn_');
+            $stmt = $pdo->prepare("INSERT INTO earning (earning_id, wallet_id, amount, earning_type, status, created_at) VALUES (?, ?, ?, 'fee', 'completed', NOW())");
+            $stmt->execute([$earning_id, $wallet_id_db, $fee]);
+
+            // Insert a payment log record into the payment_logs table
+            $provider = "w"; // short code for wallet
+            $reference = "booking_id: " . $booking_id;
+            $payment_status = "completed";
+            $stmt = $pdo->prepare("INSERT INTO payment_logs (user_id, transaction_id, provider, reference, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$user_id, $transaction_id, $provider, $reference, $payment_status]);
+
+            // --- New: Check for 3 consecutive bookings for the same room ---
+            // Retrieve the 3 most recent bookings for this user
+            $stmt = $pdo->prepare("SELECT room_id FROM bookings WHERE user_id = ? ORDER BY booking_date DESC LIMIT 3");
+            $stmt->execute([$user_id]);
+            $lastThree = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Check if there are 3 bookings and all are for the current room
+            if (count($lastThree) == 3 && 
+                $lastThree[0]['room_id'] == $room_id && 
+                $lastThree[1]['room_id'] == $room_id && 
+                $lastThree[2]['room_id'] == $room_id) {
+                // Calculate discount refund (e.g., 10% cashback on total cost)
+                $discountRefund = 0.10 * $total_cost;
+
+                // Credit the discount refund to the user's wallet
+                $stmt = $pdo->prepare("UPDATE wallets SET balance = balance + ? WHERE user_id = ?");
+                $stmt->execute([$discountRefund, $user_id]);
+                $new_balance += $discountRefund; // update the new_balance variable
+
+                // Insert a transaction record for the discount refund
+                $discount_txn_id = uniqid('tx_disc_');
+                $stmt = $pdo->prepare("INSERT INTO transactions (transaction_id, wallet_id, amount, transaction_type, status, created_at) VALUES (?, ?, ?, 'discount', 'completed', NOW())");
+                $stmt->execute([$discount_txn_id, $wallet_id_db, $discountRefund]);
+
+                // Append discount info to the feedback message
+                $feedbackMessage .= " You also received a discount refund of ksh. " . number_format($discountRefund, 2) . " to your wallet for booking this room 3 times consecutively.";
+            }
+
+            // Commit transaction
+            $pdo->commit();
+
+            $feedbackMessage = "Booking successful! Total cost: ksh. " . number_format($total_cost, 2) .
+                               " + Transaction Fee: ksh. " . number_format($fee, 2) .
+                               ". Available balance: ksh. " . number_format($new_balance, 2) . ". " . $feedbackMessage;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $feedbackMessage = "Error: " . $e->getMessage();
+        }
     }
 }
 
@@ -131,11 +178,13 @@ $profile_picture = $user && !empty($user["profile_picture"])
     : "../assets/imgs/customer01.jpg";
 
 // Fetch user's bookings (joined with room details)
-$stmt = $pdo->prepare("SELECT b.id as booking_id, b.room_id, b.days, b.total_cost, b.booking_date, 'pending' as status, r.name as room_name 
+// Only the 5 most recent bookings will be shown here.
+$stmt = $pdo->prepare("SELECT b.id as booking_id, b.room_id, b.days, b.total_cost, b.booking_date, b.status, r.name as room_name 
                        FROM bookings b 
                        LEFT JOIN rooms r ON b.room_id = r.id 
                        WHERE b.user_id = ? 
-                       ORDER BY b.booking_date DESC");
+                       ORDER BY b.booking_date DESC
+                       LIMIT 5");
 $stmt->execute([$user_id]);
 $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -170,19 +219,26 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
       margin-bottom: 20px;
     }
     /* Booking Form */
-    .booking-form input[type="number"],
-    .booking-form button {
-      width: 100%;
-      padding: 14px;
+    .booking-form input[type="number"] {
+      /* Reduce width & padding for a smaller look */
+      width: auto;
+      max-width: 150px;
+      padding: 8px;
       margin: 10px 0;
-      font-size: 1rem;
+      font-size: 0.9rem;
       border: 1px solid #ccc;
       border-radius: 8px;
     }
     .booking-form button {
+      /* Also reduce width & padding */
+      width: auto;
+      padding: 8px 16px;
+      margin: 10px 0;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
       background: #2a2185;
       color: #fff;
-      border: none;
       cursor: pointer;
       transition: background 0.3s;
     }
@@ -224,6 +280,11 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background: #2a2185;
       color: #fff;
     }
+    /* Status styling: if the booking is canceled, show in red */
+    .status-canceled {
+      color: red;
+      font-weight: bold;
+    }
     .cancel-btn {
       padding: 8px 14px;
       background: #e74c3c;
@@ -236,6 +297,20 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     .cancel-btn:hover {
       background: #c0392b;
+    }
+    .view-more-btn {
+      padding: 8px 14px;
+      background: #2a2185;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+    .view-more-btn:hover {
+      background: #1c193f;
     }
     /* Rooms Grid */
     .rooms-grid {
@@ -268,6 +343,13 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
       margin: 0 0 10px;
       font-size: 1.2rem;
       color: #2a2185;
+    }
+    /* Clamped text for descriptions (limit to 2 lines) */
+    .clamped-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .room-details p {
       font-size: 0.9rem;
@@ -352,19 +434,19 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <div class="room-image">
             <img src="../<?php echo htmlspecialchars($room['image']); ?>" alt="Room Image">
           </div>
-        <?php endif; ?>
-        <p><?php echo htmlspecialchars($room['description']); ?></p>
-        <p>Price per day: ksh. <?php echo number_format($room['price'], 2); ?></p>
-        <p>Note: Book for 4 or more days or if this is your third booking for this room to receive a 10% discount!</p>
-        <form method="POST" action="">
-          <label for="days">Number of Days:</label>
-          <input type="number" id="days" name="days" min="1" value="1" required>
+        <?php endif; ?><br>
+        <p><?php echo htmlspecialchars($room['description']); ?></p><br>
+        <p>Price per day: ksh. <?php echo number_format($room['price'], 2); ?></p><br>
+        <p><i>Note: Book for 4 or more days or if this is your third booking for this room to receive a 10% discount!</i></p>
+        <form method="POST" action=""><br>
+          <label for="days"><b>Number of Days:</b></label><br>
+          <input type="number" id="days" name="days" min="1" value="1" required><br>
           <button type="submit">Confirm Booking</button>
         </form>
       </div>
       <?php endif; ?>
 
-      <!-- My Bookings Section -->
+      <!-- My Bookings Section (Limited to 5 records) -->
       <div class="bookings-section">
         <h2>My Bookings</h2>
         <?php if ($bookings && count($bookings) > 0): ?>
@@ -381,23 +463,41 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </thead>
             <tbody>
               <?php foreach ($bookings as $b): ?>
-                <tr>
+                <!-- Summary Row -->
+                <tr class="booking-summary">
                   <td><?php echo htmlspecialchars($b['room_name']); ?></td>
                   <td><?php echo htmlspecialchars($b['days']); ?></td>
                   <td><?php echo "ksh. " . number_format($b['total_cost'], 2); ?></td>
                   <td><?php echo htmlspecialchars($b['booking_date']); ?></td>
-                  <td><?php echo htmlspecialchars(ucfirst($b['status'])); ?></td>
                   <td>
-                    <?php if (strtolower($b['status']) === 'pending'): ?>
-                      <a class="cancel-btn" href="cancel_booking.php?id=<?php echo $b['booking_id']; ?>" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</a>
-                    <?php else: ?>
-                      N/A
-                    <?php endif; ?>
+                    <?php 
+                      $status = htmlspecialchars(ucfirst($b['status']));
+                      if (strtolower($b['status']) === 'canceled') {
+                        echo "<span class='status-canceled'>$status</span>";
+                      } else {
+                        echo $status;
+                      }
+                    ?>
+                  </td>
+                  <td>
+                    <button type="button" class="view-more-btn" onclick="toggleDetails('details-<?php echo $b['booking_id']; ?>', this)">View More</button>
+                  </td>
+                </tr>
+                <!-- Hidden Extra Details Row -->
+                <tr id="details-<?php echo $b['booking_id']; ?>" class="booking-details" style="display:none;">
+                  <td colspan="6">
+                    <strong>Booking ID:</strong> <?php echo htmlspecialchars($b['booking_id']); ?><br>
+                    <strong>Room ID:</strong> <?php echo htmlspecialchars($b['room_id']); ?><br>
+                    <!-- Add any additional details as needed -->
                   </td>
                 </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
+          <!-- Link to view full booking history -->
+          <div style="text-align: right; margin-top: 10px;">
+            <a href="booking_history.php" style="font-size: 0.9rem; color: #2a2185; text-decoration: underline;">View More History</a>
+          </div>
         <?php else: ?>
           <p>You have not booked any rooms yet.</p>
         <?php endif; ?>
@@ -417,7 +517,8 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endif; ?>
                 <div class="room-details">
                   <h3><?php echo htmlspecialchars($r['name']); ?></h3>
-                  <p><?php echo htmlspecialchars($r['description']); ?></p>
+                  <!-- Truncated description using clamped-text class -->
+                  <p class="clamped-text"><?php echo htmlspecialchars($r['description']); ?></p><br>
                   <p class="room-price">Ksh <?php echo number_format($r['price'], 2); ?> / night</p>
                   <a href="room_details.php?id=<?php echo $r['id']; ?>">View Details</a>
                 </div>
@@ -432,5 +533,19 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php include '../includes/navbarroot.php'; ?>
   </div>
+  
+  <!-- JavaScript to toggle extra details -->
+  <script>
+  function toggleDetails(detailsId, btn) {
+    var detailsRow = document.getElementById(detailsId);
+    if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+      detailsRow.style.display = 'table-row';
+      btn.textContent = 'View Less';
+    } else {
+      detailsRow.style.display = 'none';
+      btn.textContent = 'View More';
+    }
+  }
+  </script>
 </body>
 </html>
