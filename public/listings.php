@@ -36,8 +36,10 @@ $profile_picture = $user && !empty($user["profile_picture"])
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 20px;
+      margin-top: 20px;
     }
     .room-card {
+      position: relative; /* for the heart icon */
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -49,6 +51,19 @@ $profile_picture = $user && !empty($user["profile_picture"])
     .room-card:hover {
       transform: scale(1.02);
     }
+    /* Heart (favorite) icon in the top-right corner */
+    .heart-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #999;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .heart-icon:hover {
+      color: #e74c3c; /* red on hover */
+    }
     .room-card img {
       width: 100%;
       height: 180px;
@@ -56,35 +71,67 @@ $profile_picture = $user && !empty($user["profile_picture"])
     }
     .room-info {
       padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      background-color: #2a2185;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
     .room-info h3 {
-      margin-bottom: 10px;
-      color: #2a2185;
-    }
-    .room-info p {
-      margin-bottom: 10px;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .room-info .price {
+      margin: 6px 0;
       font-size: 1.1rem;
-      font-weight: bold;
       color: #2a2185;
+    }
+    .hosted {
+      color: #555;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #ff9900;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    .rating ion-icon {
+      font-size: 1rem;
+    }
+    .price-info {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #333;
       margin-bottom: 5px;
     }
     .room-info .capacity {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #777;
     }
     .select-btn {
       display: block;
+      margin-top: 8px;
       text-align: center;
       background-color: #2a2185;
       color: #fff;
       text-decoration: none;
       padding: 10px;
-      border-top: 1px solid #ccc;
+      border-radius: 4px;
       transition: background-color 0.3s;
+      font-size: 0.95rem;
     }
     .select-btn:hover {
       background-color: #1c193f;
@@ -130,19 +177,50 @@ $profile_picture = $user && !empty($user["profile_picture"])
           <div class="rooms-grid">
             <?php foreach ($rooms as $room): ?>
               <div class="room-card">
+                <!-- Heart Icon (favorite) -->
+                <ion-icon name="heart-outline" class="heart-icon"></ion-icon>
+
+                <!-- Room Image -->
                 <?php if (!empty($room['image'])): ?>
                   <img src="../<?php echo htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['name']); ?>">
                 <?php else: ?>
                   <img src="../assets/imgs/default-room.png" alt="Default Room Image">
                 <?php endif; ?>
+
+                <!-- Room Info Section -->
                 <div class="room-info">
-                  <h3><?php echo htmlspecialchars($room['name']); ?></h3>
-                  <p><?php echo htmlspecialchars($room['description']); ?></p>
-                  <p class="price">ksh. <?php echo number_format($room['price'], 2); ?></p>
-                  <p class="capacity">Capacity: <?php echo htmlspecialchars($room['capacity']); ?></p>
+                  <div>
+                    <!-- Top Row: Badge or location -->
+                    <div class="top-row">
+                      <!-- Example "Guest favorite" badge (conditional) -->
+                      <span class="badge">Guest favorite</span>
+                      <!-- Or you could display location if you have that in DB -->
+                    </div>
+
+                    <!-- Room Name -->
+                    <h3><?php echo htmlspecialchars($room['name']); ?></h3>
+
+                    <!-- Host & Rating (placeholders for now) -->
+                    <div class="hosted">Hosted by Nicole</div>
+                    <div class="rating">
+                      <ion-icon name="star"></ion-icon>
+                      4.88
+                    </div>
+
+                    <!-- Price Info (with /night) -->
+                    <div class="price-info">
+                      Ksh <?php echo number_format($room['price'], 2); ?> / night
+                    </div>
+
+                    <!-- Capacity -->
+                    <div class="capacity">
+                      Capacity: <?php echo htmlspecialchars($room['capacity']); ?>
+                    </div>
+                  </div>
+
+                  <!-- "Select Room" Button -->
+                  <a href="room_details.php?id=<?php echo $room['id']; ?>" class="select-btn">Select Room</a>
                 </div>
-                <!-- Link to the booking page -->
-                <a href="room_details.php?id=<?php echo $room['id']; ?>" class="select-btn">Select Room</a>
               </div>
             <?php endforeach; ?>
           </div>

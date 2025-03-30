@@ -1,5 +1,9 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once '../config/db_connect.php';
 
 // Ensure only admins can access this page.
@@ -42,9 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($error)) {
         $updatePicture = false;
-        $targetDir = "../uploads/";
-
-        // Check if a new picture is uploaded.
+        // Set the uploads directory with trailing slash.
+        $targetDir = "../uploads/rooms/";
+        
+        // Check if a new picture is uploaded. Input name is "picture"
         if (isset($_FILES['picture']) && $_FILES['picture']['error'] === UPLOAD_ERR_OK) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (!in_array($_FILES['picture']['type'], $allowedTypes)) {
@@ -56,9 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if (move_uploaded_file($_FILES["picture"]["tmp_name"], $targetFile)) {
                     $updatePicture = true;
+                    // Build the relative path to be stored in the DB
+                    $newFilePath = "uploads/rooms/" . $newFileName;
                     // Remove old picture if any.
-                    if (!empty($room['picture'])) {
-                        $oldPicturePath = $targetDir . $room['picture'];
+                    if (!empty($room['image'])) {
+                        $oldPicturePath = $targetDir . $room['image'];
                         if (file_exists($oldPicturePath)) {
                             unlink($oldPicturePath);
                         }
@@ -73,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($error)) {
             try {
                 if ($updatePicture) {
-                    $stmt = $pdo->prepare("UPDATE rooms SET name = ?, description = ?, price = ?, capacity = ?, picture = ? WHERE id = ?");
-                    $stmt->execute([$name, $description, $price, $capacity, $newFileName, $room_id]);
+                    $stmt = $pdo->prepare("UPDATE rooms SET name = ?, description = ?, price = ?, capacity = ?, image = ? WHERE id = ?");
+                    $stmt->execute([$name, $description, $price, $capacity, $newFilePath, $room_id]);
                 } else {
                     $stmt = $pdo->prepare("UPDATE rooms SET name = ?, description = ?, price = ?, capacity = ? WHERE id = ?");
                     $stmt->execute([$name, $description, $price, $capacity, $room_id]);
@@ -101,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <style>
     body {
       font-family: 'Inter', sans-serif; 
-      background-color: #f5f7fa; /* Light background */
+      background-color: #f5f7fa;
     }
     /* Top navbar */
     .navbar {
@@ -110,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .navbar-brand {
       font-weight: 600;
-      color: #000; /* brand text color */
+      color: #000;
     }
     /* Left sidebar */
     .sidebar {
@@ -127,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-weight: 500;
     }
     .sidebar a:hover {
-      color: #2a2185; /* brand color on hover */
+      color: #2a2185;
     }
     /* Main content area */
     .main-content {
@@ -146,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .card-title {
       font-weight: 600;
-      color: #2a2185; /* brand color */
+      color: #2a2185;
     }
     .btn-brand {
       background-color: #2a2185;
@@ -174,7 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container-fluid">
       <a class="navbar-brand" href="#">WeshPAY</a>
       <div class="ml-auto d-flex align-items-center">
-        <!-- Replace with dynamic user info if desired -->
         <span class="mr-3">Welcome, Admin</span>
         <img src="../assets/imgs/default-profile.png" alt="Profile" class="rounded-circle" style="width:40px;height:40px;">
       </div>
@@ -185,7 +191,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
       <!-- Sidebar -->
       <div class="col-md-2 sidebar">
-        <!-- Example nav links (replace with your includes/navbar_admin.php if you like) -->
         <a href="admin_dashboard.php">Dashboard</a>
         <a href="admin_manage_rooms.php">Manage Rooms</a>
       </div>
@@ -249,11 +254,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 >
               </div>
 
-              <?php if (!empty($room['picture'])): ?>
+              <?php if (!empty($room['image'])): ?>
                 <div class="form-group current-picture">
                   <label>Current Picture:</label><br>
                   <img 
-                    src="../uploads/<?php echo htmlspecialchars($room['picture']); ?>" 
+                    src="../uploads/rooms/<?php echo htmlspecialchars($room['image']); ?>" 
                     alt="Room Picture"
                   >
                 </div>

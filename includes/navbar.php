@@ -2,6 +2,7 @@
       <ul>
         <li><a href="dashboard.php"><ion-icon name="home-outline"></ion-icon> Dashboard</a></li>
         <li><a href="listings.php"><ion-icon name="bed-outline"></ion-icon>Available AirBNB</a></li>
+        <li><a href="my_bookings.php"><ion-icon name="bed-outline"></ion-icon>Booked Rooms</a></li>
         <li><a href="booking_history.php" class="active"><ion-icon name="receipt-outline"></ion-icon> Booking History</a></li>
         <li><a href="deposit.php"><ion-icon name="card-outline"></ion-icon> Deposit Funds</a></li>
         <li><a href="redeem_points.php"><ion-icon name="gift-outline"></ion-icon> Redeem Points</a></li>
