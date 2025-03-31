@@ -38,12 +38,21 @@ try {
 } catch (PDOException $e) {
     die("Error fetching messages: " . $e->getMessage());
 }
+
+// --- NEW CODE: Fetch notifications for the current user ---
+try {
+    $stmt = $pdo->prepare("SELECT id, message, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC");
+    $stmt->execute([$user_id]);
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching notifications: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>weshPAY - Messages</title>
+  <title>weshPAY - Messages & Notifications</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ======= Unified Styles (Same as your new dashboard) ======= -->
@@ -54,15 +63,16 @@ try {
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
   <style>
-    .messages-table {
+    .messages-table, .notifications-table {
       width: 100%;
       border-collapse: collapse;
     }
-    .messages-table th, .messages-table td {
+    .messages-table th, .messages-table td,
+    .notifications-table th, .notifications-table td {
       padding: 12px;
       border-bottom: 1px solid #ddd;
     }
-    .messages-table th {
+    .messages-table th, .notifications-table th {
       background-color: #f2f2f2;
       color: #333;
     }
@@ -70,7 +80,7 @@ try {
       font-weight: bold;
       color: #2a2185;
     }
-    .no-messages {
+    .no-messages, .no-notifications {
       text-align: center; 
       margin-top: 20px; 
       font-size: 1rem;
@@ -101,13 +111,14 @@ try {
       </div>
     </header>
 
-    <!-- Messages Page Content -->
+    <!-- Page Content -->
     <section class="overview">
       <div class="welcome-card">
-        <h1>Your Messages</h1>
-        <p>Check your inbox for recent updates.</p>
+        <h1>Your Messages & Notifications</h1>
+        <p>Check your inbox and notifications for recent updates.</p>
       </div>
 
+      <!-- Messages Section -->
       <div class="table-card">
         <div class="table-header">
           <h2>Inbox</h2>
@@ -131,7 +142,6 @@ try {
                         <?php echo htmlspecialchars($msg['subject']); ?>
                       </span>
                       <br>
-                      <!-- You could truncate content or display it in a modal -->
                       <small><?php echo htmlspecialchars(substr($msg['content'], 0, 50)); ?>...</small>
                     </td>
                     <td><?php echo htmlspecialchars($msg['sender_name']); ?></td>
@@ -146,6 +156,35 @@ try {
             </table>
           <?php else: ?>
             <p class="no-messages">No messages found.</p>
+          <?php endif; ?>
+        </div>
+      </div>
+
+      <!-- Notifications Section -->
+      <div class="table-card" style="margin-top: 40px;">
+        <div class="table-header">
+          <h2>Notifications</h2>
+        </div>
+        <div class="table-responsive">
+          <?php if (!empty($notifications)): ?>
+            <table class="notifications-table">
+              <thead>
+                <tr>
+                  <th>Message</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($notifications as $notification): ?>
+                  <tr>
+                    <td><?php echo htmlspecialchars($notification['message']); ?></td>
+                    <td><?php echo htmlspecialchars($notification['created_at']); ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          <?php else: ?>
+            <p class="no-notifications">No notifications found.</p>
           <?php endif; ?>
         </div>
       </div>
