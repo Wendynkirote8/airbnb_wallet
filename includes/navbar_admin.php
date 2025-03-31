@@ -58,7 +58,7 @@
           </a>
         </li>
         <li>
-          <a onclick="window.location.href='../public/logout_admin.php';" style="cursor: pointer;">
+          <a onclick="window.location.href='../admin/logout_admin.php';" style="cursor: pointer;">
             <span class="icon">
               <ion-icon name="log-out-outline"></ion-icon>
             </span>
