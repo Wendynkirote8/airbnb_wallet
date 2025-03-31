@@ -228,7 +228,7 @@ try {
                     </span>
                   </p>
                   <div class="action-links">
-                    <a class="view-btn" href="booking_details.php?id=<?php echo $booking['booking_id']; ?>">View Details</a>
+                    <a class="view-btn" href="#?id=<?php echo $booking['booking_id']; ?>">View Details</a>
                     <?php if (strtolower($booking['status']) === 'pending'): ?>
                       <a class="cancel-btn" href="cancel_booking.php?id=<?php echo $booking['booking_id']; ?>" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel Booking</a>
                     <?php endif; ?>

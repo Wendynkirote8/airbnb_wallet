@@ -640,7 +640,7 @@ $baseImageUrl = '/airbnb_wallet/';
             <div class="listing-details">
               <div class="listing-title"><?php echo htmlspecialchars($room['name']); ?></div>
               <div class="listing-price">Ksh <?php echo number_format($room['price'], 2); ?>/night</div>
-              <a href="room_details.php?id=<?php echo $room['id']; ?>">View Details</a>
+              <a href="landig_room_details.php">View Details</a>
             </div>
           </div>
         <?php endforeach; ?>
